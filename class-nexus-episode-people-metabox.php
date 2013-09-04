@@ -54,14 +54,12 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 	public function save($post_id, $post) {
 		if ( $this->verify_nonce() ) return $post_id;
 
-		/*
-			TODO:
-			confluence-people TO nexus-episode-person
-		*/
+		// used to ensure a script locally wrote previous values
+		if ( !$this->is_post_key('nexus-person-commit') ) return $post_id;
 
 		$people = $this->is_post_key('nexus-person') ? $this->get_post_field('nexus-person') : array();
-		// because people are singular when not together
 
+		// get existing people attached to this episode
 		$meta = get_post_meta($post_id, 'nexus-episode-people');
 		$ids = array();
 
@@ -69,16 +67,19 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			$person_id = intval($person);
 			$ids[] = $person_id;
 
-			// does the person_id exist?
-			$post = get_posts( 'p=' . $person_id );
-			if (!empty($post)) continue;
+			// only add IDs that exist
+			$post = get_post( $person_id );
+			if (empty($post)) continue;
 
+			// if the person is already attached, don't add them again
 			if ( in_array($person_id, $meta) ) continue;
 
-			
+			// add them
 			add_post_meta($post_id, 'nexus-episode-people', $person_id);
 		}
 
+		// people that were attached but not attached now
+		// can be detached
 		$delete = array_diff($meta, $ids);
 		foreach ($delete as $person_id) {
 			delete_post_meta($post_id, 'nexus-episode-people', $person_id);

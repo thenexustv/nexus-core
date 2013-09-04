@@ -14,12 +14,14 @@ class Nexus_Feed {
 	}
 
 	public function include_the_fringe( $query ) {
-		global $wp_query;
+
 
 		// only target feeds and the main query when the ?fringe is detected
 		// TODO: add support for a query_var
 		if ( $query->is_feed() && $query->is_main_query() && isset($_GET['fringe']) ) {
 			
+			global $wp_query;
+
 			$ids = $this->find_fringe_episodes($query);
 
 			$length = count($ids);
@@ -36,10 +38,10 @@ class Nexus_Feed {
 			*/
 			$query->set('category_name', join(',', array($query->query['category_name'], 'tf')) );
 
-			// without this reset, this entire thing breaks a sad death
-			// please cry with me.
+			// this doesn't solve anything
 			$wp_query = $query;
-		}
+		} 
+
 
 		return $query;
 
@@ -59,8 +61,8 @@ class Nexus_Feed {
 			if (is_numeric($fringe_id)) $ids[] = $fringe_id;
 		}
 
-		// wp_reset_query();
-		// wp_reset_postdata();
+		wp_reset_query();
+		wp_reset_postdata();
 
 		return $ids;
 
