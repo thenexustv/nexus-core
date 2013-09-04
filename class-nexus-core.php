@@ -33,12 +33,16 @@ class Nexus_Core {
 	 */
 	protected $plugin_screen_hook_suffix = null;
 
+	protected $version;
+
 	/**
 	 * Initialize the plugin by setting localization, filters, and administration functions.
 	 *
 	 * @since     0.0.1
 	 */
 	private function __construct() {
+
+		$this->setup();
 
 		// Check for required theme and plugins.
 		add_action('admin_init', array($this, 'installation_check'));
@@ -50,6 +54,9 @@ class Nexus_Core {
 		// Add admin script and styles.
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_styles'));
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+
+		// Clean up the dashboard
+		add_action('wp_dashboard_setup', array($this, 'remove_dashboard_widgets'));
 
 		if (is_admin()) {
 			add_filter('the_title', array($this, 'admin_format_episode_title'));
@@ -72,11 +79,30 @@ class Nexus_Core {
 
 		add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_items'));
 
-		add_filter('after_tracking_url', array($this, 'modify_tracking_url'), 10, 2);
+		add_filter('after_tracking_url', array($this, 'modify_after_tracking_url'), 10, 2);
 
 	}
 
-	public function modify_tracking_url($redirect, $url) {
+	private function setup() {
+		$theme = wp_get_theme(); // get the current theme's data
+		$this->version = $theme->Version;
+	}
+
+	public function remove_dashboard_widgets() {
+		global $wp_meta_boxes;
+
+		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
+		unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
+		unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_right_now']);
+		unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
+		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_recent_drafts']);
+		unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
+		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+
+	}
+
+	public function modify_after_tracking_url($redirect, $url) {
 		if ( current_user_can('manage_options') || isset($_GET['nt']) ) return $url;
 		return $redirect;
 	}

@@ -26,6 +26,7 @@
 			$.each(data, function(i, obj){
 				peopleList.append(self.create_person_box(obj.label, obj.value));
 			});
+			peopleList.append($('<input type="hidden" name="nexus-person-commit" value="1" />'));
 			return true;
 		},
 
