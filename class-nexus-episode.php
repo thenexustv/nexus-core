@@ -2,11 +2,7 @@
 
 class Nexus_Episode {
 
-	/*
-	
-
-	*/
-	public static function factory($object) {
+	public static function factory($object = null) {
 		global $wp_query;
 
 		if ( null == self::$core ) {
@@ -70,6 +66,12 @@ class Nexus_Episode {
 
 	public function get_posted_date($format = null) {
 		return get_the_time($format, $this->post);
+	}
+
+	public function is_new($tolerance = 5) {
+		$computed = $this->get_posted_date('U');
+		$against = strtotime("-$tolerance days");
+		return $computed > $against;
 	}
 
 	public function get_modified_date() {
@@ -143,7 +145,8 @@ class Nexus_Episode {
 
 		$enclosure = explode("\n", $enclosure[0]);
 
-		$formatted['url'] = $enclosure[0];
+		$formatted['url'] = $this->get_tracking_url($enclosure[0]);
+		$formatted['_url'] = $enclosure[0];
 		$formatted['size'] = $enclosure[1];
 		$formatted['mime'] = $enclosure[2];
 
@@ -164,8 +167,76 @@ class Nexus_Episode {
 		return $formatted;
 	}
 
-	
+	public function get_tracking_url($url) {
 
+		// leverage PowerPress
+		$powerpress_general_settings = get_option('powerpress_general');
+		// we need 'redirect0' as the key
+		$key = 'redirect1';
+
+		if ( !isset($powerpress_general_settings[$key]) ) return $url; 
+
+		$tracking = $powerpress_general_settings[$key];
+		$tracking = str_replace('http://', '', $tracking);
+
+		$url_clean = apply_filters('before_tracking_url', $url);
+		$url_clean = str_replace('http://', '', $url_clean);
+
+		$redirect = "http://{$tracking}{$url_clean}";
+
+		// this filter will allow for admin filter
+		$redirect = apply_filters('after_tracking_url', $redirect, $url);
+
+		return $redirect;
+	}
+
+	public function has_people() {
+		$meta = get_post_meta($this->id, 'nexus-episode-people');
+		if ( $meta && is_array($meta) ) return true;
+		return false;
+	}
+
+
+	/*
+		returns two tiers of people; those with and without emails for gravatrs
+
+	*/
+	public function get_people() {
+		$meta = get_post_meta($this->id, 'nexus-episode-people');
+		if ( !$meta || !is_array($meta) ) return false;
+
+		$hosts = array();
+		$primary = array();
+		$secondary = array();
+
+		foreach ($meta as $person_id) {
+			$email = get_post_meta($person_id, 'nexus-people-email', true);
+			$host = (get_post_meta($person_id, 'nexus-people-host', true) == '1') ? true : false;
+
+			if ( !is_string($email) || '' == trim($email) ) $secondary[] = $person_id;
+			elseif ( $host && is_string($email) ) $hosts[] = $person_id;
+			else $primary[] = $person_id;
+		}
+
+		$data = array('primary' => $primary, 'secondary' => $secondary, 'hosts' => $hosts);
+
+		return $data;
+
+	}
+
+	public function get_albumart($settings = array()) {
+		$default = array(
+			'size' => 'medium',
+			'link_to_post' => false,
+			'format' => 'array',
+			'post_id' => $this->get_id()
+		);
+		$settings = array_merge($default, $settings);
+		$settings = apply_filters('get_album_art_settings', $settings);
+		$image = get_the_image($settings);
+		if ( !$image || empty($image) ) return false;
+		return $image;
+	}
 
 
 }

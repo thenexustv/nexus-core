@@ -118,6 +118,12 @@
 
 	};
 
+	var Reformat = {
+
+		
+
+	};
+
 	$(document).ready(function() {
 		EpisodePeople.setup();
 		Episode.setup();

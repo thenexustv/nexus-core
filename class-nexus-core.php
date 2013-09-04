@@ -9,14 +9,6 @@ class Nexus_Core {
 	use Nexus_Singleton;
 
 	/**
-	 * Plugin version, used for cache-busting of style and script file references.
-	 *
-	 * @since   0.0.1
-	 * @var     string
-	 */
-	protected $version = '0.0.1';
-
-	/**
 	 * Unique identifier for your plugin.
 	 *
 	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
@@ -64,6 +56,8 @@ class Nexus_Core {
 			add_action('save_post', array($this, 'save_episode_number'), 11, 2);
 		}
 		add_filter('wp_title', array($this, 'page_format_episode_title'));
+		add_filter('wp_title', array($this, 'format_home_title'));
+
 
 		// Load public-facing style sheet and JavaScript.
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
@@ -78,6 +72,13 @@ class Nexus_Core {
 
 		add_action('wp_before_admin_bar_render', array($this, 'remove_admin_bar_items'));
 
+		add_filter('after_tracking_url', array($this, 'modify_tracking_url'), 10, 2);
+
+	}
+
+	public function modify_tracking_url($redirect, $url) {
+		if ( current_user_can('manage_options') || isset($_GET['nt']) ) return $url;
+		return $redirect;
 	}
 
 	public function add_body_classes($classes) {
@@ -156,7 +157,6 @@ class Nexus_Core {
 	}
 
 	function save_episode_number($post_id, $post) {
-		$prefix = $this->get_prefix('episode-number');
 
 		if ( $post->post_type != 'episode' || !current_user_can('edit_post', $post_id ) ) return $post_id;
 
@@ -166,7 +166,7 @@ class Nexus_Core {
 
 		$number = apply_filters('nexus_episode_number', $number);
 		do_action('before_save_episode_number', $number);
-		update_post_meta($post_id, $prefix, $number);
+		update_post_meta($post_id, 'nexus_episode_number', $number);
 	}
 
 	/**
@@ -175,6 +175,11 @@ class Nexus_Core {
 	 */
 	public function register_custom_taxonomies() {
 		$this->register_episodes();
+		
+		// we will always have post thumbnails so why not put this here?
+		add_theme_support( 'post-thumbnails', array('episode'));
+		// TODO: does this work?
+
 		// no longer registering a series
 		$this->register_episode_attributes();
 		$this->register_people();
@@ -512,9 +517,14 @@ class Nexus_Core {
 		);
 	}
 
+	public function format_home_title($title) {
+		if ( !is_front_page() ) return $title;
+		return 'The Nexus: Podcasts from the Technological Convergence';
+	}
+
 	public function page_format_episode_title($title) {
 		global $post;
-		if (!$post || 'episode' != $post->post_type || is_feed()) return $title;
+		if (!$post || 'episode' != $post->post_type || is_feed() || is_archive()) return $title;
 		return $this->format_episode_title($post);
 	}
 
@@ -613,7 +623,7 @@ class Nexus_Core {
 		return $since;
 	}
 
-	public static function _human_length($length) {
+	public static function human_duration($length) {
 		/* this works for standard powerpress times 01:23:45 | hour | minute | second */
 		$parts = explode(':', $length);
 		$times = array( array('hour', 'hours'), array('minute', 'minutes'), array('second, seconds') );
@@ -637,6 +647,14 @@ class Nexus_Core {
 			$size /= $base;
 		}
 		return round($size, 2) . ' ' . $sizes[$place];
+	}
+
+	public static function human_list($array, $sep = ', ', $join = ' and ') {
+	  if ( 1 == sizeof($array) ) return $array[0];
+	  $last  = array_slice($array, -1);
+	  $first = join($sep, array_slice($array, 0, -1));
+	  $both  = array_filter(array_merge(array($first), $last));
+	  return join($join, $both);
 	}
 
 }

@@ -10,7 +10,7 @@ class Nexus_Series {
 			self::$series_core = Nexus_Core::get_instance();
 		}
 
-		if ( $object instanceof WP_POST ) {
+		if ( $object instanceof WP_Post ) {
 
 			if ( 'episode' != $object->post_type ) new WP_Error('not_episode', 'Not An Episode');
 			return new self($object->ID);
@@ -81,6 +81,10 @@ class Nexus_Series {
 	public function get_permalink() {
 		if ( !$this->primary ) return '';
 		return get_category_link($this->series_id);
+	}
+
+	public function get_feed_permalink() {
+		return get_category_feed_link($this->series_id);
 	}
 
 }

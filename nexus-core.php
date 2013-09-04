@@ -3,7 +3,7 @@
 Plugin Name: Nexus Core
 Plugin URI: http://thenexus.tv/?nexus-core
 Description: The core of the Nexus.
-Version: 0.0.1
+Version: 1.0.0
 Author:
 Author URI: http://ryanrampersad.com
 License: MIT
@@ -21,6 +21,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'trait-nexus-singleton.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-core.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-series.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-episode.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-person.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-feed.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-series-settings.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-metabox.php' );
@@ -29,6 +30,11 @@ require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-people-metabox.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-episode-metabox.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-playboard.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'class-nexus-most-recent.php' );
+
+// vendor
+
+require_once( plugin_dir_path( __FILE__ ) . 'vendor/get-the-image/get-the-image.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'vendor/loop-pagination/loop-pagination.php' );
 
 // activation and deactivation hooks
 register_activation_hook( __FILE__, array( 'Nexus_Core', 'activate' ) );
