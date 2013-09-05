@@ -1,0 +1,40 @@
+<?php
+
+class Nexus_People_Metabox extends Nexus_Metabox {
+
+	use Nexus_Singleton;
+
+	// the name of the module
+	protected $module_name = 'episode';
+
+	public function __construct() {
+		add_action('add_meta_boxes', array($this, 'add_meta_box'));
+		add_action('save_post', array($this, 'save'), 10, 2);
+	}
+
+	public function add_meta_box() {
+		add_meta_box('episode-box', esc_html('Personnel Details'), array($this, 'display'), 'person', 'normal');
+	}
+
+	public function display($object, $box) {
+		include(NEXUS_CORE_VIEWS . '/people-metabox.php');
+	}
+
+	public function save($post_id, $post) {
+		if ( $this->verify_nonce() ) return $post_id;
+
+		$fields = array();
+		$fields = array('nexus-people-email', 'nexus-people-twitter-url', 'nexus-people-googleplus-url', 'nexus-people-website-url');
+
+		foreach ($fields as $field) {
+			$value = $this->is_post_key($field) ? $this->get_post_field($field) : '';
+			$this->common_save($post_id, $field, sanitize_text_field($value));
+		}
+
+		$ishost = $this->is_post_key('nexus-people-host') ? '1' : '';
+		$this->common_save($post_id, 'nexus-people-host', $ishost);
+
+	}
+
+}
+
