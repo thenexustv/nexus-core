@@ -40,8 +40,9 @@ $this->print_nonce_field();
 	</div>
 
 </div>
-<div>
-<pre>
-<?php print_r(get_post_meta($object->ID)); ?>
-</pre>
+
+<div class="hidden">
+	<pre>
+	<?php print_r(get_post_meta($object->ID)); ?>
+	</pre>
 </div>
