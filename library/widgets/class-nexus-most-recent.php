@@ -19,7 +19,7 @@ class Nexus_Most_Recent {
 	public function display() {
 		$recent = $this->get_recent_data();
 		$core = Nexus_Core::get_instance();
-		include(NEXUS_VIEWS . '/most-recent-dashboard.php');
+		include(NEXUS_CORE_VIEWS . '/most-recent-dashboard.php');
 	}
 
 	public function update_post($post_id, $post) {

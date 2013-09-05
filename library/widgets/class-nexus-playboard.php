@@ -18,7 +18,7 @@ class Nexus_Playboard {
 
 	public function display() {
 		$playboard = $this->get_playboard_data();
-		include(NEXUS_VIEWS . '/playboard-dashboard.php');
+		include(NEXUS_CORE_VIEWS . '/playboard-dashboard.php');
 	}
 
 	public function update_post($post_id, $post) {

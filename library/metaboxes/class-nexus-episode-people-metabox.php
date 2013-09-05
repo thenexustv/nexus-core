@@ -48,7 +48,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			$members[] = array('label' => $post->post_title, 'value' => $value);
 		}
 
-		include(NEXUS_VIEWS . '/episode-people-metabox.php');
+		include(NEXUS_CORE_VIEWS . '/episode-people-metabox.php');
 	}
 
 	public function save($post_id, $post) {

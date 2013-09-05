@@ -496,7 +496,7 @@ class Nexus_Core {
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_styles() {
-		wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/admin.css', dirname(__FILE__) ), array(), $this->version );
 	}
 
 	/**
@@ -507,7 +507,7 @@ class Nexus_Core {
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_scripts() {
-		wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', dirname(__FILE__) ), array( 'jquery' ), $this->version );
 	}	
 
 	/**
@@ -595,7 +595,7 @@ class Nexus_Core {
 	 * @since    0.0.1
 	 */
 	public function display_plugin_admin_page() {
-		include( NEXUS_VIEWS . '/admin.php' );
+		include( NEXUS_CORE_VIEWS . 'admin.php' );
 	}
 
 	/**
