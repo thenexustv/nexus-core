@@ -16,7 +16,11 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 
 	public function episode_people_search_callback() {
 		global $wpdb;
-		$posts = get_posts(array('post_type' => 'person', 's' => sanitize_text_field($_REQUEST['term']) ));
+		$arguments = array(
+			'post_type' => 'person',
+			's' => sanitize_text_field($_REQUEST['term'])
+		);
+		$posts = get_posts($arguments);
 		$suggestions = array();
 		global $post;
 		foreach ($posts as $post):

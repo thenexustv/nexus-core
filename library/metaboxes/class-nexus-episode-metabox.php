@@ -16,14 +16,15 @@ class Nexus_Episode_Metabox extends Nexus_Metabox {
 
 	public function episode_search() {
 		global $wpdb;
-		$posts = get_posts(array(
+		$arguments = array(
 			'post_type' => 'episode',
 			'post_status' => 'any',
 			's' => sanitize_text_field($_REQUEST['term']),
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'numberposts' => 10
-		));
+		);
+		$posts = get_posts();
 		$suggestions = array();
 		global $post;
 		foreach ($posts as $post):
