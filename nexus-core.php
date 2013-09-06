@@ -28,6 +28,7 @@ define('NEXUS_CORE_CSS', NEXUS_CORE_PATH . 'css/');
 
 // generic includes
 require_once( NEXUS_CORE_LIBRARY . 'trait-nexus-singleton.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-utility.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
 
 // core

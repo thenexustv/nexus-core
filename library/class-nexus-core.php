@@ -598,89 +598,10 @@ class Nexus_Core {
 		include( NEXUS_CORE_VIEWS . 'admin.php' );
 	}
 
-	/**
-	 * Creates a human readable time, relative to supplied data
-	 * @param type $from 
-	 * @param type $to 
-	 * @return string
-	 */
-	public static function human_time_difference( $from, $to = '' ) {
-		if ( empty($to) )
-			$to = time();
-		$diff = (int) abs($to - $from);
-		if ($diff <= 3600) {
-			$mins = round($diff / 60);
-			if ($mins <= 1) {
-				$mins = 1;
-			}
-			/* translators: min=minute */
-			$since = sprintf(_n('%s minute', '%s minutes', $mins), $mins);
-		} else if (($diff <= 86400) && ($diff > 3600)) {
-			$hours = round($diff / 3600);
-			if ($hours <= 1) {
-				$hours = 1;
-			}
-			$since = sprintf(_n('%s hour', '%s hours', $hours), $hours);
-		} else if ($diff >= 86400 && $diff < 604800) {
-			$days = round($diff / 86400);
-			if ($days <= 1) {
-				$days = 1;
-			}
-			$since = sprintf(_n('%s day', '%s days', $days), $days);
-		} else if ( $diff >= 604800 && $diff < 2629743 ) {
-	        $weeks = round($diff / 604800);
-	        if ($weeks <= 1) {
-	            $weeks = 1;
-	        }
-	        $since = sprintf(_n('%s week', '%s weeks', $weeks), $weeks);
-	    } else if ( $diff >= 2629743 && $diff < 31556926  ) {
-	        $months = round($diff / 2629743);
-	        if ($months <= 1) {
-	            $months = 1;
-	        }
-	        $since = sprintf(_n('%s month', '%s months', $months), $months);
-	    } else {
-	        $years = round($diff / 31556926);
-	        if ($years <= 1) {
-	            $years = 1;
-	        }
-	        $since = sprintf(_n('%s year', '%s years', $years), $years);
-	    }
-		return $since;
-	}
+	
 
-	public static function human_duration($length) {
-		/* this works for standard powerpress times 01:23:45 | hour | minute | second */
-		$parts = explode(':', $length);
-		$times = array( array('hour', 'hours'), array('minute', 'minutes'), array('second, seconds') );
-		$output = '';
-		/* ignore seconds */
-		for ($i = 0; $i < 2; $i++) {
-			$value = (int)$parts[$i];
-			if ( $value == 0 ) continue;
-			$word = ( $value == 1 ? $times[$i][0] : $times[$i][1] );
-			$output = $output . ($value . ' ' . $word . ' ');
-		}
 
-		return trim($output);
-	}
 
-	public static function human_filesize($size) {
-		$base = 1024;
-		$sizes = array('B', 'KB', 'MB', 'GB', 'TB');
-		$place = 0;
-		for (; $size > $base; $place++) { 
-			$size /= $base;
-		}
-		return round($size, 2) . ' ' . $sizes[$place];
-	}
 
-	public static function human_list($array, $sep = ', ', $join = ' and ') {
-	  if ( 1 == sizeof($array) ) return $array[0];
-	  $last  = array_slice($array, -1);
-	  $first = join($sep, array_slice($array, 0, -1));
-	  $both  = array_filter(array_merge(array($first), $last));
-	  return join($join, $both);
-	}
 
 }
