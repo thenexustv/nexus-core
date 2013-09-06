@@ -412,7 +412,7 @@ class Nexus_Core {
 			echo('<div class="error"><p>PowerPress is not active! Please activate PowerPress.</p></div>');
 		}
 		if (false == $theme) {
-			echo('<div class="error"><p>Convergence Theme is not active! Please activate the Convergence Theme.</p></div>');
+			echo('<div class="error"><p>Convergence Theme is not active! Please activate the Coprime Theme.</p></div>');
 		}
 	}
 
@@ -551,7 +551,7 @@ class Nexus_Core {
 	public function page_format_episode_title($title) {
 		global $post;
 		if (!$post || 'episode' != $post->post_type || is_feed() || is_archive()) return $title;
-		return $this->format_episode_title($post);
+		return Nexus_Episode::format_episode_title($post);
 	}
 
 	public function admin_format_episode_title($title) {
@@ -560,33 +560,7 @@ class Nexus_Core {
 
 		if ('edit-episode' != $screen->id || !$post || 'episode' != $post->post_type) return $title; 
 
-		return $this->format_episode_title($post);
-	}
-
-	public function format_episode_title($object = null) {
-		global $wp_query;
-		if ( $object instanceof WP_Post ) {
-			if ( 'episode' != $object->post_type ) return $object->title;
-			$id = $object->ID;
-			$number = $this->get_episode_number($object);
-			if ( false == $number ) {
-				$number = 'X';
-			}
-			$categories = get_the_category($id);
-			$category = 'Episode';
-			if ( isset($categories[0]) && strtolower($categories[0]->cat_name) != 'uncategorized' ) {
-				$category = $categories[0]->cat_name;
-			}
-			$title = $object->post_title;
-
-			$formatted_title = "$category #$number: $title";
-			return $formatted_title;
-		} elseif ( is_numeric($object) ) {
-			return $this->format_episode_title( get_post($object) );
-		} elseif ( isset($wp_query->post) ) {
-			return $this->format_episode_title($wp_query->post);
-		}
-		new WP_Error('no_post', 'No Episode Title Available');
+		return Nexus_Episode::format_episode_title($post);
 	}
 
 	/**

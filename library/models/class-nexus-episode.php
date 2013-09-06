@@ -22,6 +22,37 @@ class Nexus_Episode {
 		new WP_Error('not_episode', 'Not An Episode');
 	}
 
+	public static function format_episode_title($object = null) {
+		global $post;
+
+		if ( $object instanceof WP_Post ) {
+			if ( 'episode' != $object->post_type ) return $object->post_title;
+			$id = $object->ID;
+			$number = Nexus_Core::get_instance()->get_episode_number($object);
+			if ( false == $number ) {
+				$number = 'X';
+			}
+
+			$categories = get_the_category($id);
+
+			$category = 'Episode';
+
+			if ( isset($categories[0]) && strtolower($categories[0]->cat_name) != 'uncategorized' ) {
+				$category = $categories[0]->cat_name;
+			}
+
+			$title = $object->post_title;
+
+			$formatted_title = "$category #$number: $title";
+			return $formatted_title;
+		} elseif ( is_numeric($object) ) {
+			return self::format_episode_title( get_post($object) );
+		} elseif ( isset($post) ) {
+			return self::format_episode_title($post);
+		}
+		new WP_Error('no_post', 'No Episode Title Available');
+	}	
+
 	private $id;
 	private $post;
 
@@ -87,7 +118,7 @@ class Nexus_Episode {
 	}
 
 	public function get_formatted_title() {
-		return self::$core->format_episode_title($this->id);
+		return self::format_episode_title($this->id);
 	}
 
 	public function is_fringe() {
