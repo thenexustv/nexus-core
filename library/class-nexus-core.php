@@ -81,6 +81,8 @@ class Nexus_Core {
 
 		add_filter('after_tracking_url', array($this, 'modify_after_tracking_url'), 10, 2);
 
+		add_filter('pre_get_posts', array($this, 'filter_search_results'));
+
 	}
 
 	private function setup() {
@@ -100,6 +102,13 @@ class Nexus_Core {
 		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
 		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
 
+	}
+
+	public function filter_search_results($query) {
+		if ( $query->is_search ) {
+			$query->set('post_type', 'episode');
+		}
+		return $query;
 	}
 
 	public function modify_after_tracking_url($redirect, $url) {
