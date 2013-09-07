@@ -5,10 +5,6 @@ class Nexus_Episode {
 	public static function factory($object = null) {
 		global $wp_query;
 
-		if ( null == self::$core ) {
-			self::$core = Nexus_Core::get_instance();
-		}
-
 		if ( $object instanceof WP_POST ) {
 			if ( 'episode' != $object->post_type ) new WP_Error('not_episode', 'Not An Episode');
 			$id = $object->ID;
@@ -44,6 +40,9 @@ class Nexus_Episode {
 			$title = $object->post_title;
 
 			$formatted_title = "$category #$number: $title";
+
+			$formatted_title = wptexturize($formatted_title);
+
 			return $formatted_title;
 		} elseif ( is_numeric($object) ) {
 			return self::format_episode_title( get_post($object) );
@@ -55,10 +54,6 @@ class Nexus_Episode {
 
 	private $id;
 	private $post;
-
-	// a simple reference to the core is kept nearby
-	private static $core;
-
 
 	/*
 		Never constructed directly.
@@ -83,7 +78,7 @@ class Nexus_Episode {
 	}
 
 	public function get_episode_number() {
-		return self::$core->get_episode_number($this->id);
+		return Nexus_Core::get_instance()->get_episode_number($this->id);
 	}
 
 	public function get_series_name() {
@@ -110,7 +105,9 @@ class Nexus_Episode {
 	}
 
 	public function get_title() {
-		return $this->post->post_title;
+		$title = $this->post->post_title;
+		$title = wptexturize($title);
+		return $title;
 	}
 
 	public function get_content() {
