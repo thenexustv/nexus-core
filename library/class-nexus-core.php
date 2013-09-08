@@ -105,7 +105,7 @@ class Nexus_Core {
 	}
 
 	public function filter_search_results($query) {
-		if ( $query->is_search ) {
+		if ( $query->is_search && false == (defined('DOING_AJAX') && DOING_AJAX) ) {
 			$query->set('post_type', 'episode');
 		}
 		return $query;

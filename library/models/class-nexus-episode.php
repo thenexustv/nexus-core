@@ -19,37 +19,8 @@ class Nexus_Episode {
 	}
 
 	public static function format_episode_title($object = null) {
-		global $post;
-
-		if ( $object instanceof WP_Post ) {
-			if ( 'episode' != $object->post_type ) return $object->post_title;
-			$id = $object->ID;
-			$number = Nexus_Core::get_instance()->get_episode_number($object);
-			if ( false == $number ) {
-				$number = 'X';
-			}
-
-			$categories = get_the_category($id);
-
-			$category = 'Episode';
-
-			if ( isset($categories[0]) && strtolower($categories[0]->cat_name) != 'uncategorized' ) {
-				$category = $categories[0]->cat_name;
-			}
-
-			$title = $object->post_title;
-
-			$formatted_title = "$category #$number: $title";
-
-			$formatted_title = wptexturize($formatted_title);
-
-			return $formatted_title;
-		} elseif ( is_numeric($object) ) {
-			return self::format_episode_title( get_post($object) );
-		} elseif ( isset($post) ) {
-			return self::format_episode_title($post);
-		}
-		new WP_Error('no_post', 'No Episode Title Available');
+		$episode = Nexus_Episode::factory($object);
+		return $episode->get_formatted_title();
 	}	
 
 	private $id;
@@ -104,18 +75,57 @@ class Nexus_Episode {
 		return $this->post->post_modified;
 	}
 
+	public function get_title_raw() {
+		$title = $this->post->post_title;
+		return $title;
+	}
+
 	public function get_title() {
 		$title = $this->post->post_title;
+
+		if ( $this->is_fringe() && $this->has_parent() ) {
+
+			if ( !stripos($title, '#') && !(stripos($title, '--') || stripos($title, '-')) ) {
+				$parent = Nexus_Episode::factory($this->get_parent());
+				$series = $parent->get_series();
+
+				$slug = strtoupper($series->get_slug());
+
+				$number = $parent->get_episode_number();
+				$title = "{$slug} #{$number} -- {$title}";
+			}
+
+		}
+
+
+		$title = apply_filters('episode_get_title', $title, $this);
 		$title = wptexturize($title);
+
 		return $title;
+	}
+
+	public function get_formatted_title() {
+		$id = $this->post->ID;
+		$number = $this->get_episode_number();
+		if ( false == $number ) { $number = 'X'; }
+
+		$series = $this->get_series();
+		$name = $series->get_name();
+
+		$name = ('' != $name ? $name : 'Episode' );
+
+		$title = $this->get_title();
+
+		$template = "{$name} #{$number}: {$title}";
+		
+		$template = wptexturize($template);
+
+		return $template;
+
 	}
 
 	public function get_content() {
 		return $this->post->post_content;
-	}
-
-	public function get_formatted_title() {
-		return self::format_episode_title($this->id);
 	}
 
 	public function is_fringe() {
@@ -130,7 +140,6 @@ class Nexus_Episode {
 
 	public function has_parent() {
 		$option = get_post_meta($this->id, 'nexus-parent-episode', true);
-		var_dump($option);
 		if ( is_numeric($option) ) return true;
 		return false;
 	}

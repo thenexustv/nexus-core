@@ -18,6 +18,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		global $wpdb;
 		$arguments = array(
 			'post_type' => 'person',
+			'post_status' => 'any',
 			's' => sanitize_text_field($_REQUEST['term'])
 		);
 		$posts = get_posts($arguments);
