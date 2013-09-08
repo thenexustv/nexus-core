@@ -89,8 +89,7 @@ class Nexus_Feed {
 		// if ( isset($wp_query->post) || isset($wp_query->post->post_type) || 'episode' != $wp_query->post->post_type )
 		// 		return $content;
 
-		$core = Nexus_Core::get_instance();
-		return $core->format_episode_title($wp_query->post->ID);
+		return Nexus_Episode::format_episode_title($wp_query->post->ID);
 	}
 
 	public function feed_body($content) {

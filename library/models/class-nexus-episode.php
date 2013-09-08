@@ -5,10 +5,6 @@ class Nexus_Episode {
 	public static function factory($object = null) {
 		global $wp_query;
 
-		if ( null == self::$core ) {
-			self::$core = Nexus_Core::get_instance();
-		}
-
 		if ( $object instanceof WP_POST ) {
 			if ( 'episode' != $object->post_type ) new WP_Error('not_episode', 'Not An Episode');
 			$id = $object->ID;
@@ -22,12 +18,13 @@ class Nexus_Episode {
 		new WP_Error('not_episode', 'Not An Episode');
 	}
 
+	public static function format_episode_title($object = null) {
+		$episode = Nexus_Episode::factory($object);
+		return $episode->get_formatted_title();
+	}	
+
 	private $id;
 	private $post;
-
-	// a simple reference to the core is kept nearby
-	private static $core;
-
 
 	/*
 		Never constructed directly.
@@ -52,7 +49,7 @@ class Nexus_Episode {
 	}
 
 	public function get_episode_number() {
-		return self::$core->get_episode_number($this->id);
+		return Nexus_Core::get_instance()->get_episode_number($this->id);
 	}
 
 	public function get_series_name() {
@@ -78,16 +75,57 @@ class Nexus_Episode {
 		return $this->post->post_modified;
 	}
 
+	public function get_title_raw() {
+		$title = $this->post->post_title;
+		return $title;
+	}
+
 	public function get_title() {
-		return $this->post->post_title;
+		$title = $this->post->post_title;
+
+		if ( $this->is_fringe() && $this->has_parent() ) {
+
+			if ( !stripos($title, '#') && !(stripos($title, '--') || stripos($title, '-')) ) {
+				$parent = Nexus_Episode::factory($this->get_parent());
+				$series = $parent->get_series();
+
+				$slug = strtoupper($series->get_slug());
+
+				$number = $parent->get_episode_number();
+				$title = "{$slug} #{$number} -- {$title}";
+			}
+
+		}
+
+
+		$title = apply_filters('episode_get_title', $title, $this);
+		$title = wptexturize($title);
+
+		return $title;
+	}
+
+	public function get_formatted_title() {
+		$id = $this->post->ID;
+		$number = $this->get_episode_number();
+		if ( false == $number ) { $number = 'X'; }
+
+		$series = $this->get_series();
+		$name = $series->get_name();
+
+		$name = ('' != $name ? $name : 'Episode' );
+
+		$title = $this->get_title();
+
+		$template = "{$name} #{$number}: {$title}";
+		
+		$template = wptexturize($template);
+
+		return $template;
+
 	}
 
 	public function get_content() {
 		return $this->post->post_content;
-	}
-
-	public function get_formatted_title() {
-		return self::$core->format_episode_title($this->id);
 	}
 
 	public function is_fringe() {
@@ -102,7 +140,6 @@ class Nexus_Episode {
 
 	public function has_parent() {
 		$option = get_post_meta($this->id, 'nexus-parent-episode', true);
-		var_dump($option);
 		if ( is_numeric($option) ) return true;
 		return false;
 	}

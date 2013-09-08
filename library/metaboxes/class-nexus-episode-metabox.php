@@ -16,14 +16,15 @@ class Nexus_Episode_Metabox extends Nexus_Metabox {
 
 	public function episode_search() {
 		global $wpdb;
-		$posts = get_posts(array(
+		$arguments = array(
 			'post_type' => 'episode',
 			'post_status' => 'any',
-			's' => sanitize_text_field($_REQUEST['term']),
 			'orderby' => 'date',
 			'order' => 'DESC',
-			'numberposts' => 10
-		));
+			'numberposts' => 10,
+			's' => sanitize_text_field($_REQUEST['term'])
+		);
+		$posts = get_posts($arguments);
 		$suggestions = array();
 		global $post;
 		foreach ($posts as $post):
@@ -58,7 +59,7 @@ class Nexus_Episode_Metabox extends Nexus_Metabox {
 
 		$nsfw_episode = get_post_meta($object->ID, 'nexus-nsfw-episode', true);
 
-		include(NEXUS_VIEWS . '/episode-metabox.php');
+		include(NEXUS_CORE_VIEWS . '/episode-metabox.php');
 	}
 
 	public function save($post_id, $post) {

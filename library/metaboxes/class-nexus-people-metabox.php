@@ -17,7 +17,7 @@ class Nexus_People_Metabox extends Nexus_Metabox {
 	}
 
 	public function display($object, $box) {
-		include(NEXUS_VIEWS . '/people-metabox.php');
+		include(NEXUS_CORE_VIEWS . '/people-metabox.php');
 	}
 
 	public function save($post_id, $post) {

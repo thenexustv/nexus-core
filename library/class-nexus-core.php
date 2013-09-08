@@ -81,6 +81,8 @@ class Nexus_Core {
 
 		add_filter('after_tracking_url', array($this, 'modify_after_tracking_url'), 10, 2);
 
+		add_filter('pre_get_posts', array($this, 'filter_search_results'));
+
 	}
 
 	private function setup() {
@@ -100,6 +102,13 @@ class Nexus_Core {
 		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
 		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
 
+	}
+
+	public function filter_search_results($query) {
+		if ( $query->is_search && false == (defined('DOING_AJAX') && DOING_AJAX) ) {
+			$query->set('post_type', 'episode');
+		}
+		return $query;
 	}
 
 	public function modify_after_tracking_url($redirect, $url) {
@@ -412,7 +421,7 @@ class Nexus_Core {
 			echo('<div class="error"><p>PowerPress is not active! Please activate PowerPress.</p></div>');
 		}
 		if (false == $theme) {
-			echo('<div class="error"><p>Convergence Theme is not active! Please activate the Convergence Theme.</p></div>');
+			echo('<div class="error"><p>Convergence Theme is not active! Please activate the Coprime Theme.</p></div>');
 		}
 	}
 
@@ -496,7 +505,7 @@ class Nexus_Core {
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_styles() {
-		wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/admin.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( $this->plugin_slug .'-admin-styles', plugins_url( 'css/admin.css', dirname(__FILE__) ), array(), $this->version );
 	}
 
 	/**
@@ -507,7 +516,7 @@ class Nexus_Core {
 	 * @return    null    Return early if no settings page is registered.
 	 */
 	public function enqueue_admin_scripts() {
-		wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', __FILE__ ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( $this->plugin_slug . '-admin-script', plugins_url( 'js/admin.js', dirname(__FILE__) ), array( 'jquery' ), $this->version );
 	}	
 
 	/**
@@ -551,7 +560,7 @@ class Nexus_Core {
 	public function page_format_episode_title($title) {
 		global $post;
 		if (!$post || 'episode' != $post->post_type || is_feed() || is_archive()) return $title;
-		return $this->format_episode_title($post);
+		return Nexus_Episode::format_episode_title($post);
 	}
 
 	public function admin_format_episode_title($title) {
@@ -560,33 +569,7 @@ class Nexus_Core {
 
 		if ('edit-episode' != $screen->id || !$post || 'episode' != $post->post_type) return $title; 
 
-		return $this->format_episode_title($post);
-	}
-
-	public function format_episode_title($object = null) {
-		global $wp_query;
-		if ( $object instanceof WP_Post ) {
-			if ( 'episode' != $object->post_type ) return $object->title;
-			$id = $object->ID;
-			$number = $this->get_episode_number($object);
-			if ( false == $number ) {
-				$number = 'X';
-			}
-			$categories = get_the_category($id);
-			$category = 'Episode';
-			if ( isset($categories[0]) && strtolower($categories[0]->cat_name) != 'uncategorized' ) {
-				$category = $categories[0]->cat_name;
-			}
-			$title = $object->post_title;
-
-			$formatted_title = "$category #$number: $title";
-			return $formatted_title;
-		} elseif ( is_numeric($object) ) {
-			return $this->format_episode_title( get_post($object) );
-		} elseif ( isset($wp_query->post) ) {
-			return $this->format_episode_title($wp_query->post);
-		}
-		new WP_Error('no_post', 'No Episode Title Available');
+		return Nexus_Episode::format_episode_title($post);
 	}
 
 	/**
@@ -595,92 +578,13 @@ class Nexus_Core {
 	 * @since    0.0.1
 	 */
 	public function display_plugin_admin_page() {
-		include( NEXUS_VIEWS . '/admin.php' );
+		include( NEXUS_CORE_VIEWS . 'admin.php' );
 	}
 
-	/**
-	 * Creates a human readable time, relative to supplied data
-	 * @param type $from 
-	 * @param type $to 
-	 * @return string
-	 */
-	public static function human_time_difference( $from, $to = '' ) {
-		if ( empty($to) )
-			$to = time();
-		$diff = (int) abs($to - $from);
-		if ($diff <= 3600) {
-			$mins = round($diff / 60);
-			if ($mins <= 1) {
-				$mins = 1;
-			}
-			/* translators: min=minute */
-			$since = sprintf(_n('%s minute', '%s minutes', $mins), $mins);
-		} else if (($diff <= 86400) && ($diff > 3600)) {
-			$hours = round($diff / 3600);
-			if ($hours <= 1) {
-				$hours = 1;
-			}
-			$since = sprintf(_n('%s hour', '%s hours', $hours), $hours);
-		} else if ($diff >= 86400 && $diff < 604800) {
-			$days = round($diff / 86400);
-			if ($days <= 1) {
-				$days = 1;
-			}
-			$since = sprintf(_n('%s day', '%s days', $days), $days);
-		} else if ( $diff >= 604800 && $diff < 2629743 ) {
-	        $weeks = round($diff / 604800);
-	        if ($weeks <= 1) {
-	            $weeks = 1;
-	        }
-	        $since = sprintf(_n('%s week', '%s weeks', $weeks), $weeks);
-	    } else if ( $diff >= 2629743 && $diff < 31556926  ) {
-	        $months = round($diff / 2629743);
-	        if ($months <= 1) {
-	            $months = 1;
-	        }
-	        $since = sprintf(_n('%s month', '%s months', $months), $months);
-	    } else {
-	        $years = round($diff / 31556926);
-	        if ($years <= 1) {
-	            $years = 1;
-	        }
-	        $since = sprintf(_n('%s year', '%s years', $years), $years);
-	    }
-		return $since;
-	}
+	
 
-	public static function human_duration($length) {
-		/* this works for standard powerpress times 01:23:45 | hour | minute | second */
-		$parts = explode(':', $length);
-		$times = array( array('hour', 'hours'), array('minute', 'minutes'), array('second, seconds') );
-		$output = '';
-		/* ignore seconds */
-		for ($i = 0; $i < 2; $i++) {
-			$value = (int)$parts[$i];
-			if ( $value == 0 ) continue;
-			$word = ( $value == 1 ? $times[$i][0] : $times[$i][1] );
-			$output = $output . ($value . ' ' . $word . ' ');
-		}
 
-		return trim($output);
-	}
 
-	public static function human_filesize($size) {
-		$base = 1024;
-		$sizes = array('B', 'KB', 'MB', 'GB', 'TB');
-		$place = 0;
-		for (; $size > $base; $place++) { 
-			$size /= $base;
-		}
-		return round($size, 2) . ' ' . $sizes[$place];
-	}
 
-	public static function human_list($array, $sep = ', ', $join = ' and ') {
-	  if ( 1 == sizeof($array) ) return $array[0];
-	  $last  = array_slice($array, -1);
-	  $first = join($sep, array_slice($array, 0, -1));
-	  $both  = array_filter(array_merge(array($first), $last));
-	  return join($join, $both);
-	}
 
 }

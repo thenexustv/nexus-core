@@ -28,13 +28,13 @@ class Nexus_Series_Settings {
 	}
 
 	public function add_new_display($taxonomy) {
-		include(NEXUS_VIEWS . '/add-new-series-fields.php');
+		include(NEXUS_CORE_VIEWS . '/add-new-series-fields.php');
 	}
 
 	public function edit_display($term) {
 		$term_id = $term->term_id;
 		$term_meta = get_option("nexus_core_series_$term_id");
-		include(NEXUS_VIEWS . '/edit-series-fields.php');
+		include(NEXUS_CORE_VIEWS . '/edit-series-fields.php');
 	}
 
 	public function save($term_id) {

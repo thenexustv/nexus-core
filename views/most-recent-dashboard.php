@@ -5,7 +5,7 @@
 
 	<?php foreach ($recent['show'] as $post): ?>
 		<div class="episode">
-			<h4 class="title-bag"><a href="<?php echo(get_permalink($post['ID'])); ?>"><?php echo($core->format_episode_title($post['ID'])); ?></a></h4>
+			<h4 class="title-bag"><a href="<?php echo(get_permalink($post['ID'])); ?>"><?php echo(Nexus_Episode::format_episode_title($post['ID'])); ?></a></h4>
 			<div><p><?php echo($post['post_excerpt']); ?></p></div>
 			<div class="meta">
 				
@@ -25,7 +25,7 @@
 
 	<?php foreach ($recent['fringe'] as $post): ?>
 		<div class="episode">
-			<h4 class="title-bag"><a href="<?php echo(get_permalink($post['ID'])); ?>"><?php echo($core->format_episode_title($post['ID'])); ?></a></h4>
+			<h4 class="title-bag"><a href="<?php echo(get_permalink($post['ID'])); ?>"><?php echo(Nexus_Episode::format_episode_title($post['ID'])); ?></a></h4>
 			<div><p><?php echo($post['post_excerpt']); ?></p></div>
 			<div class="meta">
 				

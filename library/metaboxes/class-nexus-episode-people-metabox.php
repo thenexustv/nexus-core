@@ -16,7 +16,12 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 
 	public function episode_people_search_callback() {
 		global $wpdb;
-		$posts = get_posts(array('post_type' => 'person', 's' => sanitize_text_field($_REQUEST['term']) ));
+		$arguments = array(
+			'post_type' => 'person',
+			'post_status' => 'any',
+			's' => sanitize_text_field($_REQUEST['term'])
+		);
+		$posts = get_posts($arguments);
 		$suggestions = array();
 		global $post;
 		foreach ($posts as $post):
@@ -48,7 +53,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			$members[] = array('label' => $post->post_title, 'value' => $value);
 		}
 
-		include(NEXUS_VIEWS . '/episode-people-metabox.php');
+		include(NEXUS_CORE_VIEWS . '/episode-people-metabox.php');
 	}
 
 	public function save($post_id, $post) {
