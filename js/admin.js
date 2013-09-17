@@ -23,6 +23,7 @@
 			var self = this;
 			var json = element.html();
 			var data = $.parseJSON(json);
+			peopleList.empty();
 			$.each(data, function(i, obj){
 				peopleList.append(self.create_person_box(obj.label, obj.value));
 			});

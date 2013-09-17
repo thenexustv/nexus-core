@@ -19,6 +19,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		$arguments = array(
 			'post_type' => 'person',
 			'post_status' => 'any',
+			'numberposts' => 5,
 			's' => sanitize_text_field($_REQUEST['term'])
 		);
 		$posts = get_posts($arguments);
@@ -48,6 +49,11 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		// assemble arrays of members present
 		$members = array();
 		$meta = get_post_meta($object->ID, 'nexus-episode-people');
+		if ( !is_array($meta) ) {
+			$meta = array();
+		} else {
+			$meta = array_unique($meta);
+		}
 		foreach ($meta as $value) {
 			$post = get_post( $value );
 			$members[] = array('label' => $post->post_title, 'value' => $value);
@@ -65,27 +71,35 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		$people = $this->is_post_key('nexus-person') ? $this->get_post_field('nexus-person') : array();
 
 		// get existing people attached to this episode
-		$meta = get_post_meta($post_id, 'nexus-episode-people');
+		$meta = get_post_meta($post_id, 'nexus-episode-people', false);
+		if ( !is_array($meta) ) {
+			$meta = array();
+		} else {
+			$meta = array_unique($meta, SORT_NUMERIC);
+		}
+
 		$ids = array();
 
 		foreach ($people as $person) {
 			$person_id = intval($person);
-			$ids[] = $person_id;
 
-			// only add IDs that exist
+			if ( !is_numeric($person_id) ) continue;
+
 			$post = get_post( $person_id );
 			if (empty($post)) continue;
-
-			// if the person is already attached, don't add them again
-			if ( in_array($person_id, $meta) ) continue;
-
-			// add them
-			add_post_meta($post_id, 'nexus-episode-people', $person_id);
+			
+			$ids[] = $person_id;
 		}
 
-		// people that were attached but not attached now
-		// can be detached
+		$ids = array_unique($ids);
+
+		array_walk($ids, function($id) use ($post_id, $meta) {
+			if ( in_array($id, $meta) ) return;
+			add_post_meta($post_id, 'nexus-episode-people', $id);
+		});
+
 		$delete = array_diff($meta, $ids);
+
 		foreach ($delete as $person_id) {
 			delete_post_meta($post_id, 'nexus-episode-people', $person_id);
 		}
