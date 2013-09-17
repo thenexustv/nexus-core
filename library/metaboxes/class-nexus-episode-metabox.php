@@ -21,7 +21,7 @@ class Nexus_Episode_Metabox extends Nexus_Metabox {
 			'post_status' => 'any',
 			'orderby' => 'date',
 			'order' => 'DESC',
-			'numberposts' => 10,
+			'numberposts' => 5,
 			's' => sanitize_text_field($_REQUEST['term'])
 		);
 		$posts = get_posts($arguments);

@@ -1,0 +1,108 @@
+.person-box {
+	padding: 1em;
+}
+
+#playboard {
+	font-size: 1.3em;
+}
+
+#playboard .data-list {
+	-moz-column-count:3; /* Firefox */
+	-webkit-column-count:3; /* Safari and Chrome */
+	column-count:3;
+}
+#playboard .stats-list {
+	-moz-column-count:4; /* Firefox */
+	-webkit-column-count:4; /* Safari and Chrome */
+	column-count:4;
+}
+
+#playboard .data-list {
+	border-bottom: 1px solid #ccc;
+}
+#playboard .combine {
+	display: inline-block;
+	width: 100%;
+}
+#playboard .stats-list {
+	margin-bottom: 0;
+}
+
+#playboard .series-short-name,
+#playboard .stats-list dt {
+	text-align: center;
+	font-size: 1.1em;
+	padding: .5em;
+	font-weight: bold;
+}
+#playboard .series-episode-count,
+#playboard .stats-list dd {
+	font-size: 1em;
+	padding-bottom: .85em;
+	font-weight: normal;
+	margin-left: 0;
+	text-align: center;
+}
+
+#playboard .stats-list dt {
+	font-size: 1em;
+}
+#playboard .stats-list dd {
+	font-size: .9em;
+}
+
+#playboard .meta {
+	font-size: .8em;
+}
+
+#most-recent {
+	margin-top: 1em;
+}
+#most-recent .episode {
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 1em;
+	margin-bottom: 1em;
+}
+#most-recent .episode:last-child {
+	border-bottom: 0px;
+}
+
+#most-recent .meta {
+	font-size: .8em;
+}
+#most-recent .edit {
+	float: left;
+}
+#most-recent .datetime {
+	float: right;
+	text-transform: uppercase;
+}
+
+#most-recent .title-bag,
+#most-recent h4 * {
+	text-align: center;
+	font-size: 1.1em;
+}
+#most-recent .truncated-description {
+	font-size: 1em;
+	line-height: 1.3em;
+}
+
+/* post editor styles */
+#series-add-toggle,
+#category-add-,
+#episode_attributes-add-toggle {
+	display: none;
+}
+
+/* form fields */
+.form-field input[type="checkbox"] {
+	width: 16px; /* this restores the width from full to normal on checkboxes */
+}
+
+/* editing pages */
+
+#category-add-toggle {
+	/* Don't let users create categories this way (e.g. series) */
+	display: none;
+}
