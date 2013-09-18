@@ -84,7 +84,58 @@ class Nexus_Core {
 		add_filter('pre_get_posts', array($this, 'filter_search_results'));
 
 		add_filter('admin_footer_text', array($this, 'modify_admin_version_footer'));
+
+		// handle Person rewriting for hosts and guests
+		add_action('init', array($this, 'people_rewrite'));
+		add_action('query_vars', array($this, 'people_rewrite_query_vars'));
+		add_action('pre_get_posts', array($this, 'people_pre_get_posts'));
+
 	}
+
+	public function people_rewrite() {
+
+		add_rewrite_rule('person/guests', 'index.php?post_type=person&target=guests', 'top');
+		add_rewrite_rule('person/hosts', 'index.php?post_type=person&target=hosts', 'top');
+
+	}
+
+	public function people_rewrite_query_vars($query_vars) {
+		$query_vars[] = 'target';
+		return $query_vars;
+	}
+
+	public function people_pre_get_posts($query) {
+		if ( $query->is_post_type_archive('person') && !is_admin() ) {
+
+			$query->set('posts_per_page', 12);
+			$query->set('orderby', 'title');
+			$query->set('order', 'ASC');
+			$query->set('meta_key', 'nexus-people-host');
+
+			if ( isset($query->query_vars['target']) && $query->query_vars['target'] == 'hosts' ) {
+				$query->set('meta_key', 'nexus-people-host');
+				$query->set('meta_value', '1');
+			}
+			else if ( isset($query->query_vars['target']) && $query->query_vars['target'] == 'guests' ) {
+				$query->set('meta_key', 'nexus-people-host');
+				$query->set('meta_value', '0');
+			}
+		
+			add_filter('posts_orderby', array($this, 'people_pre_get_posts_orderby'));
+		}
+
+		return $query;
+	}
+
+	public function people_pre_get_posts_orderby($orderby) {
+		global $wpdb;
+		$orderby = $wpdb->postmeta . '.meta_value DESC, ' . $orderby;
+
+		remove_filter('posts_orderby', array($this, 'people_pre_get_posts_orderby'));
+
+		return $orderby;
+	}
+
 
 	private function setup() {
 		$theme = wp_get_theme(); // get the current theme's data
