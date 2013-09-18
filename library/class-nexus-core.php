@@ -83,7 +83,7 @@ class Nexus_Core {
 
 		add_filter('pre_get_posts', array($this, 'filter_search_results'));
 
-		add_filter('admin_footer_text', array($this, 'modify_admin_version'));
+		add_filter('admin_footer_text', array($this, 'modify_admin_version_footer'));
 	}
 
 	private function setup() {
@@ -463,7 +463,7 @@ class Nexus_Core {
 		$wp_admin_bar->remove_menu('menus', 'site-name');
 	}
 
-	public function modify_admin_versions($f) {
+	public function modify_admin_version_footer($f) {
 		$theme = wp_get_theme(); // get the current theme
 		$plugin = get_plugin_data(NEXUS_CORE);
 
