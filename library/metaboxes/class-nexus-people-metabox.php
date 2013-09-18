@@ -33,9 +33,8 @@ class Nexus_People_Metabox extends Nexus_Metabox {
 
 		// force this to always have a value; otherwise meta_key ordering will not work
 		// then force a persistent update
-		$ishost = $this->is_post_key('nexus-people-host') ? '1' : '';
-
-		$this->common_save($post_id, 'nexus-people-host', $ishost);
+		$is_host = $this->is_post_key('nexus-people-host') ? '1' : '0';
+		update_post_meta($post_id, 'nexus-people-host', $is_host);
 
 	}
 
