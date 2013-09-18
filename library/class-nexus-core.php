@@ -83,6 +83,7 @@ class Nexus_Core {
 
 		add_filter('pre_get_posts', array($this, 'filter_search_results'));
 
+		add_filter('admin_footer_text', array($this, 'modify_admin_version'));
 	}
 
 	private function setup() {
@@ -460,6 +461,17 @@ class Nexus_Core {
 		$wp_admin_bar->remove_menu('header', 'site-name');
 		$wp_admin_bar->remove_menu('widgets', 'site-name');
 		$wp_admin_bar->remove_menu('menus', 'site-name');
+	}
+
+	public function modify_admin_versions($f) {
+		$theme = wp_get_theme(); // get the current theme
+		$plugin = get_plugin_data(NEXUS_CORE);
+
+		$nexus_core_version = $plugin['Version'];
+		$coprime_version = $theme->Version;
+
+		$html = "<a href=\"https://github.com/thenexustv/nexus-core\">Nexus Core</a> {$nexus_core_version} | <a href=\"https://github.com/thenexustv/coprime\">Coprime</a> {$coprime_version}";
+		return $html;
 	}
 
 	/**
