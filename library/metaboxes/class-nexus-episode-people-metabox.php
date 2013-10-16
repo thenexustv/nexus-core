@@ -49,11 +49,18 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		// assemble arrays of members present
 		$members = array();
 		$meta = get_post_meta($object->ID, 'nexus-episode-people');
+		$original_size = 0;
+		$unique_size = 0;
 		if ( !is_array($meta) ) {
 			$meta = array();
 		} else {
+			$original_size = count($meta);
 			$meta = array_unique($meta);
+			$unique_size = count($meta);
 		}
+
+		$has_duplicates = ( $original_size != $unique_size );
+
 		foreach ($meta as $value) {
 			$post = get_post( $value );
 			$members[] = array('label' => $post->post_title, 'value' => $value);
