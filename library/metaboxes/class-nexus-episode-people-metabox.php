@@ -20,6 +20,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			'post_type' => 'person',
 			'post_status' => 'any',
 			'numberposts' => 5,
+			'order' => 'ASC',
 			's' => sanitize_text_field($_REQUEST['term'])
 		);
 		$posts = get_posts($arguments);
@@ -49,11 +50,18 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		// assemble arrays of members present
 		$members = array();
 		$meta = get_post_meta($object->ID, 'nexus-episode-people');
+		$original_size = 0;
+		$unique_size = 0;
 		if ( !is_array($meta) ) {
 			$meta = array();
 		} else {
+			$original_size = count($meta);
 			$meta = array_unique($meta);
+			$unique_size = count($meta);
 		}
+
+		$has_duplicates = ( $original_size != $unique_size );
+
 		foreach ($meta as $value) {
 			$post = get_post( $value );
 			$members[] = array('label' => $post->post_title, 'value' => $value);
@@ -63,10 +71,17 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 	}
 
 	public function save($post_id, $post) {
+
+		// tests for auto-save and revision saves
+		if( $this->is_save_ineligible($post_id) ) return $post_id;
+
+		// tests for nonce permissions
 		if ( $this->verify_nonce() ) return $post_id;
 
-		// used to ensure a script locally wrote previous values
+		// tests for javascript injected approval
 		if ( !$this->is_post_key('nexus-person-commit') ) return $post_id;
+
+		// begin
 
 		$people = $this->is_post_key('nexus-person') ? $this->get_post_field('nexus-person') : array();
 
@@ -75,7 +90,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		if ( !is_array($meta) ) {
 			$meta = array();
 		} else {
-			$meta = array_unique($meta, SORT_NUMERIC);
+			$meta = array_unique($meta);
 		}
 
 		$ids = array();
@@ -84,9 +99,6 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			$person_id = intval($person);
 
 			if ( !is_numeric($person_id) ) continue;
-
-			$post = get_post( $person_id );
-			if (empty($post)) continue;
 			
 			$ids[] = $person_id;
 		}
@@ -95,6 +107,10 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 
 		array_walk($ids, function($id) use ($post_id, $meta) {
 			if ( in_array($id, $meta) ) return;
+
+			$post = get_post( $id );
+			if (empty($post)) return;
+
 			add_post_meta($post_id, 'nexus-episode-people', $id);
 		});
 
