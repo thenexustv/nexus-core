@@ -25,6 +25,9 @@ $this->print_nonce_field();
 
 			<div><input type="text" id="nexus-episode-people-input" autocomplete="off" class="widefat" placeholder="Enter a person's name here" /></div>
 
+			<?php if ($has_duplicates): ?>
+				<div class="debug-hidden error-message"><p>Duplicate members dectected!</p></div>
+			<?php endif; ?>
 
 		</div>
 
