@@ -26,6 +26,10 @@ abstract class Nexus_Metabox {
 		return !isset($_POST[$this->get_nonce_key()]) || !wp_verify_nonce($_POST[$this->get_nonce_key()], $this->get_nonce_path());
 	}
 
+	public function is_save_ineligible($post_id) {
+		return ( wp_is_post_revision($post_id) || wp_is_post_autosave( $post_id ) );
+	}
+
 	public function is_post_key($key) {
 		return isset($_POST[$key]) && !empty($_POST[$key]);
 	}

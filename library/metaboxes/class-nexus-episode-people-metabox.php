@@ -71,10 +71,17 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 	}
 
 	public function save($post_id, $post) {
+
+		// tests for auto-save and revision saves
+		if( $this->is_save_ineligible($post_id) ) return $post_id;
+
+		// tests for nonce permissions
 		if ( $this->verify_nonce() ) return $post_id;
 
-		// used to ensure a script locally wrote previous values
+		// tests for javascript injected approval
 		if ( !$this->is_post_key('nexus-person-commit') ) return $post_id;
+
+		// begin
 
 		$people = $this->is_post_key('nexus-person') ? $this->get_post_field('nexus-person') : array();
 
@@ -83,7 +90,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 		if ( !is_array($meta) ) {
 			$meta = array();
 		} else {
-			$meta = array_unique($meta, SORT_NUMERIC);
+			$meta = array_unique($meta);
 		}
 
 		$ids = array();
@@ -113,24 +120,6 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			delete_post_meta($post_id, 'nexus-episode-people', $person_id);
 		}
 
-		$this->_debug($post_id, $meta, $ids);
-
-	}
-
-	private function _debug($post_id, $ids, $meta) {
-		$raw_meta = get_post_meta($post_id, 'nexus-episode-people', false);
-		$array = array(
-			'date' => date(DATE_RFC2822),
-			'post_id' => $post_id,
-			'ids' => $ids,
-			'meta' => $meta,
-			'raw_meta' => $raw_meta,
-			'duplicate' => ( count(array_unique($raw_meta)) != count($raw_meta) ) ? 'true' : 'false'
-		);
-		$handle = fopen(WP_CONTENT_DIR . '/_debug.txt', 'a');
-		$string = print_r($array, true);
-		fwrite($handle, $string . "\n");
-		fclose($handle);
 	}
 
 }
