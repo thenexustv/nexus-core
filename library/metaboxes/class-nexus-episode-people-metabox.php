@@ -20,6 +20,7 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			'post_type' => 'person',
 			'post_status' => 'any',
 			'numberposts' => 5,
+			'order' => 'ASC',
 			's' => sanitize_text_field($_REQUEST['term'])
 		);
 		$posts = get_posts($arguments);
@@ -91,9 +92,6 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			$person_id = intval($person);
 
 			if ( !is_numeric($person_id) ) continue;
-
-			$post = get_post( $person_id );
-			if (empty($post)) continue;
 			
 			$ids[] = $person_id;
 		}
@@ -102,6 +100,10 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 
 		array_walk($ids, function($id) use ($post_id, $meta) {
 			if ( in_array($id, $meta) ) return;
+
+			$post = get_post( $id );
+			if (empty($post)) return;
+
 			add_post_meta($post_id, 'nexus-episode-people', $id);
 		});
 
@@ -111,6 +113,24 @@ class Nexus_Episode_People_Metabox extends Nexus_Metabox {
 			delete_post_meta($post_id, 'nexus-episode-people', $person_id);
 		}
 
+		$this->_debug($post_id, $meta, $ids);
+
+	}
+
+	private function _debug($post_id, $ids, $meta) {
+		$raw_meta = get_post_meta($post_id, 'nexus-episode-people', false);
+		$array = array(
+			'date' => date(DATE_RFC2822),
+			'post_id' => $post_id,
+			'ids' => $ids,
+			'meta' => $meta,
+			'raw_meta' => $raw_meta,
+			'duplicate' => ( count(array_unique($raw_meta)) != count($raw_meta) ) ? 'true' : 'false'
+		);
+		$handle = fopen(WP_CONTENT_DIR . '/_debug.txt', 'a');
+		$string = print_r($array, true);
+		fwrite($handle, $string . "\n");
+		fclose($handle);
 	}
 
 }
