@@ -99,12 +99,12 @@ class Nexus_Feed {
 		$episode = Nexus_Episode::factory($post_id);
 		
 		// this is required because the excerpt is not in the content itself
-		$excerpt = $episode->get_excerpt();
+		$excerpt = $episode->get_excerpt() . "<br /><br />";
 
 		// NSFW flags
 		$nsfw_prepend = '';
 		if ($episode->is_nsfw()) {
-			$nsfw_prepend = "This episode of {$episode->get_series_name()} has been tagged as <abbr title=\"Not Safe For Work\">NSFW</abbr>. Please be advised.";
+			$nsfw_prepend = "This episode of {$episode->get_series_name()} has been tagged as <abbr title=\"Not Safe For Work\">NSFW</abbr>. <strong>Please be advised</strong>.";
 		}
 
 		// Fringe flags
@@ -114,15 +114,15 @@ class Nexus_Feed {
 			$relation_append = "This episode of {$episode->get_series_name()} has a Fringe episode. You should really listen to <a href=\"{$fringe->get_permalink()}\">{$fringe->get_formatted_title()}</a>!";
 		} elseif ( $episode->is_fringe() && $episode->has_parent() ) {
 			$parent = Nexus_Episode::factory($episode->get_parent());
-			$relation_append = "The parent of this Fringe episode is <a href=\"{$parent->get_permalink()}\">{$parent->get_formatted_title()}</a>, you should listen!.";
+			$relation_append = "The parent of this Fringe episode is <a href=\"{$parent->get_permalink()}\">{$parent->get_formatted_title()}</a>, you should listen!";
 		}
 
-		$body = strip_tags($excerpt) . "<br /><br />" . $this->wrap_tag($nsfw_prepend, 'aside') . $this->wrap_tag($content, 'article');
+		$header = $excerpt . $this->wrap_tag($nsfw_prepend, 'aside') . $this->wrap_tag($content, 'article');
 		$related = $this->wrap_tag($relation_append, 'p');
-		$contact = 'Listen to more at <a href='.get_bloginfo('url').'>The Nexus</a> and follow us on <a href="http://twitter.com/thenexustv">Twitter</a> and Google+ for our latest episodes.';
+		$contact = 'Listen to more at <a href='.get_bloginfo('url').'>The Nexus</a> and follow us on <a href="http://twitter.com/thenexustv">Twitter</a> and <a href="https://plus.google.com/b/110459364915252571275/110459364915252571275/posts">Google+</a> for our latest episodes and news.';
 		$footer = $this->wrap_tag( $related . $this->wrap_tag($contact, 'p') , 'footer');
 		
-		$content = $content . $footer;
+		$content = $header . $footer;
 
 		return $content;
 
