@@ -65,7 +65,6 @@ class Nexus_Core {
 		add_filter('wp_title', array($this, 'page_format_episode_title'));
 		add_filter('wp_title', array($this, 'format_home_title'));
 
-
 		// Load public-facing style sheet and JavaScript.
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
@@ -89,12 +88,24 @@ class Nexus_Core {
 		add_action('init', array($this, 'people_rewrite'));
 		add_action('query_vars', array($this, 'people_rewrite_query_vars'));
 		add_action('pre_get_posts', array($this, 'people_pre_get_posts'));
+		add_filter('redirect_canonical', array($this, 'people_paginate_redirect_canonical'));
 
+	}
+
+	public function people_paginate_redirect_canonical($url) {
+		if ( is_singular('person') ) {
+			$url = false;
+		}
+
+		return $url;
 	}
 
 	public function people_rewrite() {
 
+		add_rewrite_rule('person/guests/page/([0-9]{1,})/?$', 'index.php?post_type=person&target=guests&paged=$matches[1]', 'top');
 		add_rewrite_rule('person/guests', 'index.php?post_type=person&target=guests', 'top');
+
+		add_rewrite_rule('person/hosts/page/([0-9]{1,})/?$', 'index.php?post_type=person&target=hosts&paged=$matches[1]', 'top');
 		add_rewrite_rule('person/hosts', 'index.php?post_type=person&target=hosts', 'top');
 
 	}
@@ -110,7 +121,7 @@ class Nexus_Core {
 			$query->set('posts_per_page', 12);
 			$query->set('orderby', 'title');
 			$query->set('order', 'ASC');
-			$query->set('meta_key', 'nexus-people-host');
+			$query->set('meta_key', 'nexus-people-host');			
 
 			if ( isset($query->query_vars['target']) && $query->query_vars['target'] == 'hosts' ) {
 				$query->set('meta_key', 'nexus-people-host');
