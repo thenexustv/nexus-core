@@ -63,7 +63,7 @@ class Nexus_Core {
 			add_action('save_post', array($this, 'save_episode_number'), 11, 2);
 		}
 		add_filter('wp_title', array($this, 'page_format_episode_title'));
-		add_filter('wp_title', array($this, 'format_home_title'));
+		add_filter('wp_title', array($this, 'format_site_wide_titles'));
 
 		// Load public-facing style sheet and JavaScript.
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_styles'));
@@ -626,9 +626,45 @@ class Nexus_Core {
 		);
 	}
 
-	public function format_home_title($title) {
-		if ( !is_front_page() ) return $title;
-		return 'The Nexus: Podcasts from the Technological Convergence';
+	public function format_site_wide_titles($title) {
+		$sep = '&#8250;';
+
+		if ( is_front_page() || is_home() ) {
+			return "The Nexus $sep Podcasts from the Technological Convergence";
+		}
+
+		if ( is_feed() ) {
+			return $title;
+		}
+
+		if ( is_category() ) {
+			$title = "$title $sep Episode Archive";
+		}
+
+		if ( is_post_type_archive('episode') ) {
+			$title = "Episode Archive";
+		}
+
+		if ( is_singular('person') ) {
+			$title = "$title";
+		}
+
+		if ( is_post_type_archive('person') ) {
+			$title = '';
+			if ( get_query_var('guests') ) {
+				$title = "Guests $sep";
+			} elseif ( get_query_var('hosts') ) {
+				$title = "Hosts $sep";
+			}
+			$title = "$title People Archive";
+		}
+
+		if ( get_query_var('paged') > 0 ) {
+			$page = get_query_var('paged');
+			$title = "$title $sep Page $page";
+		}
+
+		return "$title $sep The Nexus";
 	}
 
 	public function page_format_episode_title($title) {
