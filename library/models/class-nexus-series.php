@@ -84,7 +84,22 @@ class Nexus_Series {
 	}
 
 	public function get_feed_permalink() {
+		if ( !$this->primary ) return '';
 		return get_category_feed_link($this->series_id);
+	}
+
+	public function get_itunes_subscription_url() {
+		// itunes_url
+		$powerpress_feed = get_option("powerpress_cat_feed_{$this->series_id}");
+		// var_dump($powerpress_general_settings);
+		$url = $powerpress_feed['itunes_url'];
+		
+		$url = apply_filters('get_itunes_subscription_url', $url, $this);
+
+		if ( empty($url) ) return '';
+
+		return $url;
+
 	}
 
 }
