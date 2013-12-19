@@ -3,7 +3,7 @@
 class Nexus_Series {
 
 
-	public static function factory($object) {
+	public static function factory($object = NULL) {
 		global $wp_query;
 
 		if ( null == self::$series_core ) {
