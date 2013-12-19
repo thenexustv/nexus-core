@@ -65,7 +65,7 @@ class Nexus_Episode {
 		return get_the_time($format, $this->post);
 	}
 
-	public function is_new($tolerance = 5) {
+	public function is_new($tolerance = 7) {
 		$computed = $this->get_posted_date('U');
 		$against = strtotime("-$tolerance days");
 		return $computed > $against;
