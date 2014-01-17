@@ -90,6 +90,41 @@ class Nexus_Core {
 		add_action('pre_get_posts', array($this, 'people_pre_get_posts'));
 		add_filter('redirect_canonical', array($this, 'people_paginate_redirect_canonical'));
 
+		// Open graph handling
+		add_filter('jetpack_open_graph_tags', array($this, 'modify_open_graph'), 10, 2);
+		add_filter('jetpack_open_graph_output', array($this, 'modify_twitter_site_card'));
+	}
+
+	/*
+		Modify Jetpack Open Graph support.
+	*/
+	public function modify_open_graph($tags, $sizes) {
+		
+		if ( is_home() || is_front_page() ) {
+			$tags['og:type'] = 'website';
+			$tags['og:title'] = $this->format_site_wide_titles('');
+
+			// You should feel horrible for using a URL directly
+			$tags['og:image'] = 'http://s3.amazonaws.com/the-nexus-tv/static/album-art/nx-logo/large-nx-true.png';
+		}
+
+		if ( is_singular('episode') ) {
+			$tags['og:title'] = $this->page_format_episode_title('');
+		}
+		return $tags;
+
+	}
+
+	/*
+		TODO:
+		Twitter features might open up soon to filtering and/or actions.
+		https://github.com/Automattic/jetpack/blob/4a22379af056b5728e95e2ab43e4162c58cc75d4/functions.twitter-cards.php
+	*/
+	public function modify_twitter_site_card($output) {
+		if ( stripos($output, 'twitter:site') ) {
+			return '<meta name="twitter:site" content="@thenexustv" />';
+		}
+		return $output;
 	}
 
 	public function people_paginate_redirect_canonical($url) {
