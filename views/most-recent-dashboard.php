@@ -10,7 +10,7 @@
 
 	<?php foreach ($posts as $post): ?>
 		<div class="episode">
-			<h4 class="title-bag"><a href="<?php echo(get_permalink($post['ID'])); ?>"><?php echo(Nexus_Episode::format_episode_title($post['ID'])); ?></a></h4>
+			<h4 class="title-bag"><a target="_blank" href="<?php echo(get_permalink($post['ID'])); ?>"><?php echo(Nexus_Episode::format_episode_title($post['ID'])); ?></a></h4>
 			<div><p><?php echo($post['post_excerpt']); ?></p></div>
 			<div class="meta">
 				
@@ -22,11 +22,14 @@
 				</div>
 				
 				<br class="clear" />
-
 			</div>
 		</div>
 		
 	<?php endforeach; ?>
+	
+	<div class="meta">
+		<p class="last-update"><time datetime="<?php echo(date('l jS \of F Y h:i:s A', $recent['last_update'])); ?>"><?php echo(date('l, F jS, Y', $recent['last_update'])); ?></time></p>
+	</div>
 
 	</div>
 </div>

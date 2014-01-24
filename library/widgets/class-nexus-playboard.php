@@ -29,7 +29,8 @@ class Nexus_Playboard {
 	}
 
 	public function get_playboard_data() {
-		$playboard = get_transient($this->slug . '-data');
+		// $playboard = get_transient($this->slug . '-data');
+		$playboard = false;
 		if ( false === $playboard ) {
 			$playboard = $this->get_data();
 			set_transient($this->slug . '-data', $playboard, 60 * 60 * 24);
@@ -39,10 +40,14 @@ class Nexus_Playboard {
 	}
 
 	private function get_data() {
-		$arguments = array('hide_empty' => false);
+
+		// hide empty categories
+		$arguments = array('hide_empty' => true);
 		$uncategorized = get_category_by_slug('uncategorized');
+
+		// hide uncategorized episodes
 		if ($uncategorized) {
-			$arguments['category__not_in'] = array($uncategorized->term_id);
+			$arguments['exclude'] = join(',', array($uncategorized->term_id));
 		}
 
 		$playboard = array(
@@ -52,19 +57,22 @@ class Nexus_Playboard {
 			'total_thirty' => 0,
 			'total_seven' => 0
 		);
+
 		/*
 			name, slug, count
 		*/
-		$categories = get_categories();
+		$categories = get_categories($arguments);
 		$total = 0;
+
 		foreach ($categories as $category) {
 			$data = array(
 				'name' => $category->name,
 				'slug' => strtoupper($category->slug),
 				'count' => $category->category_count
 			);
+			$data = apply_filters('nexus_core_playboard_data', $data);
 			$playboard['series'][] = $data;
-			$total += $category->category_count;
+			$total = $total + $category->category_count;
 		}
 
 

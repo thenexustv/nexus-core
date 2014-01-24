@@ -31,7 +31,8 @@ class Nexus_Most_Recent {
 
 	public function get_recent_data() {
 
-		$recent = get_transient($this->slug . '-data');
+		// $recent = get_transient($this->slug . '-data');
+		$recent = false;
 		
 		if (false === $recent) {
 			$recent = $this->get_data();
@@ -45,31 +46,41 @@ class Nexus_Most_Recent {
 	private function get_data() {
 
 		$recent = array(
-			'show' => array(),
-			'fringe' => array()
+			'show' => null,
+			'fringe' => null
 		);
+
+		$not_in = array();
+
+		$uncategorized = get_category_by_slug('uncategorized');
+		$fringe = get_category_by_slug('tf');
+
+		if ($uncategorized) {
+			$not_in[] = $uncategorized->term_id;
+		}
+		if ($fringe) {
+			$not_in[] = $fringe->term_id;
+		}
 
 		$fringe_arguments = array(
 			'numberposts' => 1,
 			'post_type' => 'episode',
-			'post_status' => 'publish'
+			'post_status' => 'publish',
+			'cat' => ($fringe ? $fringe->term_id : '')
 		);
 		$recent['fringe'] = wp_get_recent_posts($fringe_arguments);
-		
 
-		$uncategorized = get_category_by_slug('uncategorized');
-		$fringe = get_category_by_slug('tf');
 		$show_arguments = array(
 			'numberposts' => 1,
 			'post_type' => 'episode',
 			'post_status' => 'publish',
 			'post__not_in' => array($recent['fringe'][0]['ID'])
 		);
-		if ($uncategorized || $fringe) {
-			$arguments['category__not_in'] = array($uncategorized->term_id, $fringe->term_id);
-		}
+		
+		$arguments['category__not_in'] = $not_in;
 		$recent['show'] = wp_get_recent_posts($show_arguments);
 
+		$recent['last_update'] = time();
 
 		return $recent;
 	}

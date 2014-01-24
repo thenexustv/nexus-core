@@ -3,7 +3,7 @@
 Plugin Name: Nexus Core
 Plugin URI: http://thenexus.tv/?nexus-core
 Description: The core of the Nexus.
-Version: 1.0.11
+Version: 1.0.12
 Author:
 Author URI: http://ryanrampersad.com
 License: MIT
