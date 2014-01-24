@@ -26,7 +26,7 @@
 		</dl>
 		
 		<div class="meta">
-			<p class="datetime" title="<?php echo(date('l jS \of F Y h:i:s A', $playboard['last_update'])); ?>"><?php echo(date('l, F jS, Y', $playboard['last_update'])); ?></p>
+			<p class="last-update"><time datetime="<?php echo(date('l jS \of F Y h:i:s A', $playboard['last_update'])); ?>"><?php echo(date('l, F jS, Y', $playboard['last_update'])); ?></time></p>
 		</div>
 
 	</div>
