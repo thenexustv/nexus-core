@@ -8,15 +8,6 @@ class Nexus_Core {
 
 	use Nexus_Singleton;
 
-	/**
-	 * Unique identifier for your plugin.
-	 *
-	 * Use this value (not the variable name) as the text domain when internationalizing strings of text. It should
-	 * match the Text Domain file header in the main plugin file.
-	 *
-	 * @since    0.0.1
-	 * @var      string
-	 */
 	protected $plugin_slug = 'nexus-core';
 
 	protected $class_prefix = 'nexus';
@@ -24,14 +15,6 @@ class Nexus_Core {
 	public function get_prefix($key = null) {
 		return $this->class_prefix . (!empty($key) ? "-$key" : '' );
 	}
-
-	/**
-	 * Slug of the plugin screen.
-	 *
-	 * @since    0.0.1
-	 * @var      string
-	 */
-	protected $plugin_screen_hook_suffix = null;
 
 	protected $version;
 
@@ -199,6 +182,8 @@ class Nexus_Core {
 		unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
 		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
 		unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+
+		remove_meta_box('dashboard_activity', 'dashboard', 'normal');
 
 	}
 

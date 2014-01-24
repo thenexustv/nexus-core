@@ -59,9 +59,11 @@
 	margin-top: 1em;
 }
 #most-recent .episode {
-	border-bottom: 1px solid #ddd;
 	padding-bottom: 1em;
 	margin-bottom: 1em;
+}
+#most-recent .episode:first-child {
+	border-bottom: 1px solid #ddd;
 }
 #most-recent .episode:last-child {
 	border-bottom: 0px;
@@ -86,6 +88,16 @@
 #most-recent .truncated-description {
 	font-size: 1em;
 	line-height: 1.3em;
+}
+
+.meta .last-update {
+	margin: 0;
+	padding: 0;
+	font-size: 11px;
+	color: #999;
+}
+.meta .last-update:hover {
+	color: #333;
 }
 
 /* post editor styles */
