@@ -170,6 +170,14 @@ class Nexus_Episode {
 		return Nexus_Series::factory($this->id);
 	}
 
+	public function get_contact_url() {
+		$path = home_url('contact');
+		$show = sanitize_title($this->get_series_name());
+		$number = $this->get_episode_number();
+		$path = $path . "?show={$show}&number={$number}"; 
+		return $path;
+	}
+
 	public function has_enclosure($type = 'podcast') {
 		$handle = ( in_array($type, array('podcast', '')) ) ? 'enclosure' : "_{$type}:enclosure";
 		$meta = get_post_meta($this->id, $handle);
