@@ -74,8 +74,41 @@ class Nexus_Core {
 		add_filter('redirect_canonical', array($this, 'people_paginate_redirect_canonical'));
 
 		// Open graph handling
+		add_filter('jetpack_open_graph_tags', array($this, 'modify_og_img_photon'), 11, 2);
 		add_filter('jetpack_open_graph_tags', array($this, 'modify_open_graph'), 10, 2);
 		add_filter('jetpack_open_graph_output', array($this, 'modify_twitter_site_card'));
+	}
+
+	/*
+		Forced Open Graph tags to be served with Photon.
+		https://github.com/Automattic/jetpack/blob/2f6f4a418eb7177a3892994e98fdbba46b7822f9/class.photon.php#L525
+	*/
+	public function modify_og_img_photon($tags, $parameters) {
+
+		if ( !class_exists( 'Jetpack' ) ) {
+			return $tags;
+		}
+
+		if ( empty( $tags['og:image'] ) ) {
+			return $tags;
+		}
+
+		// $photon_args = array(
+		// 	'fit' => sprintf( '%d,%d', 2 * $parameters['image_width'], 2 * $parameters['image_height'] ),
+		// );
+		$photon_args = array();
+
+		if ( is_array( $tags['og:image'] ) ) {
+			$images = array();
+			foreach ( $tags['og:image'] as $image ) {
+				$images[] = jetpack_photon_url( $image, $photon_args );
+			}
+			$tags['og:image'] = $images;
+		} else {
+			$tags['og:image'] = jetpack_photon_url( $tags['og:image'], $photon_args );
+		}
+
+		return $tags;
 	}
 
 	/*
