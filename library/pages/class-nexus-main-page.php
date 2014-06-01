@@ -307,9 +307,9 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 	// render fields below
 
 	public function render_series_default_album_art($key) {
-		$template = sprintf('<input type="type" readonly="readonly" value="%3$s" id="%1$s_readonly" />
-			<input type="hidden" name="%1$s" id="%2$s" value="%3$s" />
-			<input type="button" name="_set-post-thumbnail" id="set-post-thumbnail" value="Select Image" data-field="%2$s" />',
+		$template = sprintf('
+			<input type="text" name="%1$s" id="%2$s" value="%3$s" />
+			<input type="button" id="set-post-thumbnail" value="Select Image" data-field="%2$s" />',
 			$this->get_field_name($key),
 			$this->get_field_id($key),
 			$this->get_field_value($key)
@@ -318,10 +318,46 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 		/*
 			TODO:
 				add a preview of the currently selected default album art
+				the text field above can be treated as a hidden input when that time comes
 		*/
 	}
 
 	public function render_series_default_hosts($key) {
+		$html_key = sprintf('%s[]', $this->get_field_name($key));
+		$template_key = sprintf('%s__template', $this->get_field_id($key));
+		$json_key = sprintf('%s__inflate', $key);
+		$person_ids = array();
+		
+		$data = array(
+			array('label' => 'Ian Buck', 'value' => '623'),
+			array('label' => 'Katie Reddemann', 'value' => '1833')
+		);
+
+		$underscore_template = sprintf('<script type="text/template" class="template" id="%1$s">
+			<div class="person-box">
+				<span class="label"><strong><%%= label %%></strong> </span>
+				<a class="remove-person" href="#">Remove Person</a><input type="hidden" name="%2$s" value="<%%= value %%>" />
+			</div>
+		</script>',
+			$template_key,
+			$html_key
+		);
+
+		$json_template = sprintf('<script type="application/javascript id="%1$s">%2$s</script>',
+			$this->get_field_id($json_key),
+			json_encode($data)
+		);
+
+		$form_template = sprintf('<input type="text" id="host-selector" placeholder="type to search" data-template-key="%1$s" data-inflate-key="%2$s" />',
+			$template_key,
+			$json_key
+		);
+
+		// output
+
+		echo $underscore_template;
+		echo $json_template;
+		echo $form_template;
 
 	}
 

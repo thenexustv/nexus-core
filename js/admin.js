@@ -164,9 +164,9 @@
 
 					if ( attachment !== null && typeof attachment === 'object' && ('id' in attachment) ) {
 						var element_id  = $(el).data('field');
-						var element = $(element_id);
+						var element = $('#'+element_id);
 						console.log(element);
-						// $(element).val(attachment.id);
+						$(element).val(attachment.id);
 					}
 
 				});
@@ -177,13 +177,33 @@
 
 		}
 
-	}
+	};
+
+	var PersonSelector = {
+
+		setup: function() {
+
+			var target = $("#host-selector");
+			target.autocomplete({
+		      source: ajaxurl + '?action=episode_people_search',
+		      focus: function(event, ui) {return false;},
+		      select: function(event, ui) {
+		    	console.log(event);
+		    	console.log(ui);
+		    	return false;
+		      }
+		    });
+
+		}
+
+	};
 
 	$(document).ready(function() {
 		EpisodePeople.setup();
 		Episode.setup();
 		TMCEditor.setup();
 		AlbumArtSelector.setup();
+		PersonSelector.setup();
 	});
 
 }(jQuery));
