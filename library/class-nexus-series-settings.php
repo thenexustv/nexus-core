@@ -1,6 +1,6 @@
 <?php
 
-class Nexus_Series_Settings {
+class XXXNexus_Series_Settings {
 
 	use Nexus_Singleton;
 

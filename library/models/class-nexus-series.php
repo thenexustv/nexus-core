@@ -24,6 +24,23 @@ class Nexus_Series {
 		new WP_Error('not_episode', 'Not An Episode');
 
 	}
+
+	public static function get_series_ids() {
+		$ids = array();
+
+		$categories = get_categories();
+		
+		foreach ($categories as $category) {
+			if ( $category->name == 'uncategorized' ) {
+				continue;
+			}
+
+			$id = $category->term_id;
+			$ids[] = $id;
+		}
+
+		return $ids;
+	}
 	
 	private static $series_core;
 

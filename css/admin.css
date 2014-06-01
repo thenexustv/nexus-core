@@ -1,3 +1,7 @@
+#adminmenu #toplevel_page_nexus-core-main div.wp-menu-image:before {
+    content: "\f220";
+}
+
 .person-box {
 	padding: 1em;
 }

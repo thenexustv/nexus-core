@@ -126,10 +126,64 @@
 
 	};
 
+	var AlbumArtSelector = {
+
+		setup: function() {
+
+			console.log('yo');
+
+			var selector = '#set-post-thumbnail';
+			var self = this;
+
+			$(selector).on('click', function(event){
+
+				var el = this;
+
+				event.preventDefault();
+
+				if (self.file_frame) {
+					self.file_frame.open();
+					return;
+				}
+
+				self.file_frame = wp.media.frames.file_frame = wp.media({
+
+					title: 'Default Feature Image',
+					button: {
+						text: 'Select'
+					},
+					type: 'image',
+					multiple: false
+
+				});
+
+				self.file_frame.on('select', function(){
+
+					attachment = self.file_frame.state().get('selection').first().toJSON();
+					console.log(attachment);
+
+					if ( attachment !== null && typeof attachment === 'object' && ('id' in attachment) ) {
+						var element_id  = $(el).data('field');
+						var element = $(element_id);
+						console.log(element);
+						// $(element).val(attachment.id);
+					}
+
+				});
+
+				self.file_frame.open();
+
+			});
+
+		}
+
+	}
+
 	$(document).ready(function() {
 		EpisodePeople.setup();
 		Episode.setup();
 		TMCEditor.setup();
+		AlbumArtSelector.setup();
 	});
 
 }(jQuery));

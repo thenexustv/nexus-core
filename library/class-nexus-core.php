@@ -29,8 +29,7 @@ class Nexus_Core {
 
 		// Check for required theme and plugins.
 		add_action('admin_init', array($this, 'installation_check'));
-		// Add the options page and menu item.
-		add_action('admin_menu', array($this, 'add_plugin_admin_menu'));
+
 		// Remove unneeded admin items.
 		add_action('admin_menu', array($this, 'remove_admin_menu_items'));
 
@@ -664,20 +663,10 @@ class Nexus_Core {
 		
 	}
 
-	/**
-	 * Register the administration menu for this plugin into the WordPress Dashboard menu.
-	 *
-	 * @since    0.0.1
-	 */
-	public function add_plugin_admin_menu() {
-		$this->plugin_screen_hook_suffix = add_options_page(
-			__( 'Nexus Core', $this->plugin_slug ),
-			__( 'Nexus Core', $this->plugin_slug ),
-			'read',
-			$this->plugin_slug,
-			array( $this, 'display_plugin_admin_page' )
-		);
-	}
+
+	/*
+		Page directives. See Nexus_Core_Page.
+	*/
 
 	public function format_site_wide_titles($title) {
 		$sep = '&#8250;';
@@ -735,19 +724,8 @@ class Nexus_Core {
 		return Nexus_Episode::format_episode_title($post);
 	}
 
-	/**
-	 * Render the settings page for this plugin.
-	 *
-	 * @since    0.0.1
-	 */
-	public function display_plugin_admin_page() {
-		include( NEXUS_CORE_VIEWS . 'admin.php' );
+	public function get_version() {
+		return $this->version;
 	}
-
-	
-
-
-
-
 
 }

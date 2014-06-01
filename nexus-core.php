@@ -19,6 +19,7 @@ define('NEXUS_CORE_PATH', plugin_dir_path( __FILE__ ));
 define('NEXUS_CORE_LIBRARY', NEXUS_CORE_PATH . 'library/');
 define('NEXUS_CORE_VIEWS', NEXUS_CORE_PATH . 'views/');
 define('NEXUS_CORE_METABOXES', NEXUS_CORE_LIBRARY . 'metaboxes/');
+define('NEXUS_CORE_PAGES', NEXUS_CORE_LIBRARY . 'pages/');
 define('NEXUS_CORE_MODELS', NEXUS_CORE_LIBRARY . 'models/');
 define('NEXUS_CORE_WIDGETS', NEXUS_CORE_LIBRARY . 'widgets/');
 define('NEXUS_CORE_VENDOR', NEXUS_CORE_PATH . 'vendor/');
@@ -30,9 +31,17 @@ define('NEXUS_CORE_CSS', NEXUS_CORE_PATH . 'css/');
 require_once( NEXUS_CORE_LIBRARY . 'trait-nexus-singleton.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-utility.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-view.php' );
 
 // core
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-core.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings.php' );
+
+// pages
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-pages.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-page.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings-page.php' );
+require_once( NEXUS_CORE_PAGES . 'class-nexus-main-page.php' );
 
 // feeds and settings
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-feed.php' );
@@ -68,5 +77,6 @@ Nexus_Episode_Metabox::get_instance();
 Nexus_People_Metabox::get_instance();
 Nexus_Playboard::get_instance();
 Nexus_Most_Recent::get_instance();
-Nexus_Series_Settings::get_instance();
 Nexus_Feed::get_instance();
+Nexus_Pages::get_instance();
+Nexus_Settings::get_instance();
