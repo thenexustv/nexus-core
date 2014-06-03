@@ -31,7 +31,6 @@ define('NEXUS_CORE_CSS', NEXUS_CORE_PATH . 'css/');
 require_once( NEXUS_CORE_LIBRARY . 'trait-nexus-singleton.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-utility.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-view.php' );
 
 // core
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-core.php' );
@@ -42,10 +41,12 @@ require_once( NEXUS_CORE_LIBRARY . 'class-nexus-pages.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-page.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings-page.php' );
 require_once( NEXUS_CORE_PAGES . 'class-nexus-main-page.php' );
+require_once( NEXUS_CORE_PAGES . 'class-nexus-general-settings-page.php' );
+require_once( NEXUS_CORE_PAGES . 'class-nexus-series-list-page.php' );
+require_once( NEXUS_CORE_PAGES . 'class-nexus-series-settings-page.php' );
 
 // feeds and settings
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-feed.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-series-settings.php' );
 
 // metaboxes
 require_once( NEXUS_CORE_METABOXES . 'class-nexus-episode-people-metabox.php' );
