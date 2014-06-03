@@ -122,7 +122,6 @@ class Nexus_General_Settings_Page extends Nexus_Settings_Page {
 
 	public function sanitize($settings) {
 
-
 		return $settings;
 	}
 
@@ -187,7 +186,7 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 		);
 
 		$this->add_setting('feed-title', 'Feed Title', $feed_section, 'render_text_field');
-		$this->add_setting('feed-description', 'Feed Description', $feed_section, 'render_text_field');
+		$this->add_setting('feed-description', 'Feed Description', $feed_section, 'render_text_area');
 		$this->add_setting('feed-landing-url', 'Landing URL', $feed_section, 'render_text_field');
 		$this->add_setting('feed-geographic-location', 'Geographic Location', $feed_section, 'render_text_field');
 		$this->add_setting('feed-episode-frequency', 'Episode Frequency', $feed_section, 'render_text_field');
@@ -266,6 +265,7 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 
 	public function sanitize($settings) {
 
+
 		return $settings;
 	}
 
@@ -307,58 +307,99 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 	// render fields below
 
 	public function render_series_default_album_art($key) {
+		global $post;
+		if ( is_object($post) == false ) {
+			$post = new stdClass();
+			$post->ID = '-1';
+		}
+		/*
+			The above is a monkey-patch solution for the by-default get_the_ID() call in get_the_image.
+		*/
+
+		$url = 'data:image/gif;base64,R0lGODlhAQABAIAAAP8AAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+		$image = false;
+
+		if ( $this->get_settings()->is_set($key) ) {
+
+			$arguments = array(
+				'size' => 'medium',
+				'link_to_post' => false,
+				'format' => 'array',
+				'post_id' => $this->get_settings()->get($key)
+			);
+
+			$image = get_the_image($arguments);
+
+			if ( $image && !empty($image) ) {
+				$url = $image['url'];
+			}
+
+		}
+
 		$template = sprintf('
-			<input type="text" name="%1$s" id="%2$s" value="%3$s" />
-			<input type="button" id="set-post-thumbnail" value="Select Image" data-field="%2$s" />',
+			<div class="set-series-featured-image">
+				<input type="hidden" name="%1$s" class="%2$s image-id" value="%3$s" />
+				<img src="%4$s" class="image-preview" /><br />
+				<input type="button" class="set-post-thumbnail" value="Select Image" data-field="%2$s" />
+			</div>',
 			$this->get_field_name($key),
 			$this->get_field_id($key),
-			$this->get_field_value($key)
+			$this->get_field_value($key),
+			$url
 		);
 		echo $template;
-		/*
-			TODO:
-				add a preview of the currently selected default album art
-				the text field above can be treated as a hidden input when that time comes
-		*/
 	}
 
 	public function render_series_default_hosts($key) {
 		$html_key = sprintf('%s[]', $this->get_field_name($key));
 		$template_key = sprintf('%s__template', $this->get_field_id($key));
 		$json_key = sprintf('%s__inflate', $key);
-		$person_ids = array();
 		
-		$data = array(
-			array('label' => 'Ian Buck', 'value' => '623'),
-			array('label' => 'Katie Reddemann', 'value' => '1833')
-		);
+		$person_ids = array();
+		$data = array();
+		
+		if ( $this->get_settings()->is_set($key) ) {
+			$person_ids = $this->get_field_value($key);
+		}
 
-		$underscore_template = sprintf('<script type="text/template" class="template" id="%1$s">
+		foreach($person_ids as $person_id) {
+			$person = Nexus_Person::factory($person_id);
+			$data[] = array('label' => $person->get_name(), 'value' => $person_id);
+		}
+
+		$underscore_template = sprintf('
+		<script type="text/template" class="template people-template %1$s">
 			<div class="person-box">
 				<span class="label"><strong><%%= label %%></strong> </span>
-				<a class="remove-person" href="#">Remove Person</a><input type="hidden" name="%2$s" value="<%%= value %%>" />
+				<a class="remove-person" href="#">Remove</a><input type="hidden" name="%2$s" value="<%%= value %%>" />
 			</div>
 		</script>',
 			$template_key,
 			$html_key
 		);
 
-		$json_template = sprintf('<script type="application/javascript id="%1$s">%2$s</script>',
+		$json_template = sprintf('<script type="application/javascript" class="people-list-inflate %1$s">%2$s</script>',
 			$this->get_field_id($json_key),
 			json_encode($data)
 		);
 
-		$form_template = sprintf('<input type="text" id="host-selector" placeholder="type to search" data-template-key="%1$s" data-inflate-key="%2$s" />',
+		$form_template = sprintf('
+			<div class="people-selector">
+				%3$s
+				%4$s
+				<input type="text" class="text-selector" placeholder="type to search" data-template-key="%1$s" data-inflate-key="%2$s" />
+				<div class="people-list hidden"></div>
+			</div>
+			',
 			$template_key,
-			$json_key
+			$json_key,
+			$underscore_template,
+			$json_template
 		);
 
 		// output
 
-		echo $underscore_template;
-		echo $json_template;
 		echo $form_template;
-
 	}
 
 }

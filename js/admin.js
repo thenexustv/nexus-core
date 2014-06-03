@@ -130,23 +130,38 @@
 
 		setup: function() {
 
-			console.log('yo');
+			var selectors = $('.set-series-featured-image');
+			var _this = this;
+			$.each(selectors, function(i, obj){
 
-			var selector = '#set-post-thumbnail';
-			var self = this;
+				_this.init($(obj));
 
-			$(selector).on('click', function(event){
+			});
+
+
+		},
+
+		init: function(target) {
+
+			var image = target.find('.image-preview');
+			var input = target.find('.image-id');
+			var button = target.find('.set-post-thumbnail');
+
+
+			var _this = this;
+
+			button.on('click', function(event){
 
 				var el = this;
 
 				event.preventDefault();
 
-				if (self.file_frame) {
-					self.file_frame.open();
+				if (_this.file_frame) {
+					_this.file_frame.open();
 					return;
 				}
 
-				self.file_frame = wp.media.frames.file_frame = wp.media({
+				_this.file_frame = wp.media.frames.file_frame = wp.media({
 
 					title: 'Default Feature Image',
 					button: {
@@ -157,21 +172,25 @@
 
 				});
 
-				self.file_frame.on('select', function(){
+				_this.file_frame.on('select', function(){
 
-					attachment = self.file_frame.state().get('selection').first().toJSON();
-					console.log(attachment);
+					attachment = _this.file_frame.state().get('selection').first().toJSON();
 
 					if ( attachment !== null && typeof attachment === 'object' && ('id' in attachment) ) {
-						var element_id  = $(el).data('field');
-						var element = $('#'+element_id);
-						console.log(element);
-						$(element).val(attachment.id);
+						
+						input.val(attachment.id);
+
+						if ( 'medium' in attachment.sizes ) {
+							image.attr('src', attachment.sizes.medium.url);
+						} else if ( 'thumbnail' in attachment.sizes ) {
+							image.attr('src', attachment.sizes.thumbnail.url);
+						}
+
 					}
 
 				});
 
-				self.file_frame.open();
+				_this.file_frame.open();
 
 			});
 
@@ -181,18 +200,83 @@
 
 	var PersonSelector = {
 
+
 		setup: function() {
 
-			var target = $("#host-selector");
-			target.autocomplete({
+			var selectors = $('.people-selector');
+			var _this = this;
+			$.each(selectors, function(i, obj){
+
+				_this.init($(obj));
+
+			});
+
+		},
+
+		init: function(target) {
+
+			var input = target.find('.text-selector');
+			var people_list = target.find('.people-list')
+			var template_element = target.find('.people-template');
+			var inflate_element = target.find('.people-list-inflate');
+
+			/*
+				TODO:
+					fix this episode_people_search
+			*/
+
+			input.autocomplete({
 		      source: ajaxurl + '?action=episode_people_search',
 		      focus: function(event, ui) {return false;},
 		      select: function(event, ui) {
-		    	console.log(event);
-		    	console.log(ui);
+		    	if (ui.item == false ) return false;
+
+		    	var data = {label: ui.item.label, value: ui.item.value};
+
+		    	var html = _.template(template_element.html(), data);
+
+		    	people_list.append(html);
+
+				$(this).val('');
+
 		    	return false;
 		      }
 		    });
+
+			people_list.on('click', 'a.remove-person', function(event){
+				var parent = $(this).parent('.person-box');
+				parent.hide(function(){$(this).remove();});
+				return false;
+			});
+
+			people_list.removeClass('hidden');
+
+		    target.bind('keypress', function(event){
+		    	var enter = event.keyCode == 13;
+		    	if (enter) {
+		    		event.stopPropagation();
+		    		return false;
+		    	}
+		    	return true;
+		    });
+
+		    this.inflate(inflate_element, people_list, template_element);
+
+		},
+
+		inflate: function(inflate_element, people_list, template_element) {
+
+			var data = $.parseJSON(inflate_element.html());
+			var _this = this;
+			$.each(data, function(i, obj){
+
+		    	var html = _.template(template_element.html(), obj);
+
+		    	people_list.append(html);
+
+			});
+
+			people_list.append($('<input type="hidden" name="nexus-inflate" value="1" />'));
 
 		}
 
