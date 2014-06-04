@@ -8,6 +8,12 @@ class Nexus_Pages {
 
 	private function __construct() {
 
+		$this->register();
+
+	}
+
+	public function register() {
+
 		$pages['main'] = new Nexus_Main_Page();
 		$pages['general'] = new Nexus_General_Settings_Page();
 		$pages['series_list'] = new Nexus_Series_List_Page();

@@ -5,11 +5,7 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 	private static $page_slug_template = 'nexus-core-series-%1$s-settings';
 	private $page_hook;
 
-	/*
-		TODO:
-			Get a true Nexus_Series object in the future.
-	*/
-	private $internal;
+	private $series;
 
 	public function __construct($series_id) {
 
@@ -19,7 +15,7 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 
 		parent::__construct($settings);
 
-		$this->internal = get_category($series_id);
+		$this->series = Nexus_Series::get_by_series($series_id);
 
 		add_action('admin_enqueue_scripts', function(){
 			wp_enqueue_media();
@@ -111,7 +107,7 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 
 	public function add_page() {
 
-		$name = sprintf('Series Settings &raquo; %1$s', $this->internal->name);
+		$name = sprintf('Series Settings &raquo; %1$s', $this->series->get_name());
 
 		$this->page_hook = add_submenu_page(
 			'options.php',

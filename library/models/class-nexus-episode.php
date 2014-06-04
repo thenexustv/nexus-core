@@ -5,8 +5,7 @@ class Nexus_Episode {
 	public static function factory($object = null) {
 		global $wp_query;
 
-		if ( $object instanceof WP_POST ) {
-			if ( 'episode' != $object->post_type ) new WP_Error('not_episode', 'Not An Episode');
+		if ( $object instanceof WP_POST && 'episode' == $object->post_type ) {
 			$id = $object->ID;
 			return new self($id);
 		} elseif ( is_numeric($object) ) {

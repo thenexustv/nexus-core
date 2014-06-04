@@ -51,7 +51,7 @@ require_once( NEXUS_CORE_PAGES . 'class-nexus-general-settings-page.php' );
 require_once( NEXUS_CORE_PAGES . 'class-nexus-series-list-page.php' );
 require_once( NEXUS_CORE_PAGES . 'class-nexus-series-settings-page.php' );
 
-// feeds and settings
+// feeds
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-feed.php' );
 
 // metaboxes
