@@ -2,28 +2,44 @@
 
 class Nexus_Series {
 
-
 	public static function factory($object = NULL) {
 		global $wp_query;
 
-		if ( null == self::$series_core ) {
-			self::$series_core = Nexus_Core::get_instance();
-		}
+		// _deprecated_function(__METHOD__, '1.1.0', 'Nexus_Series::get_by_episode');
 
-		if ( $object instanceof WP_Post ) {
+		return self::get_by_episode($object);
 
-			if ( 'episode' != $object->post_type ) new WP_Error('not_episode', 'Not An Episode');
-			return new self($object->ID);
+	}
 
+	public static function get_by_episode($object = NULL) {
+		global $wp_query;
+		
+		if ( $object instanceof WP_Post && $object->post_type == 'episode' ) {
+			return self::_get_by_episode($object->ID);
 		} elseif ( is_numeric($object) ) {
 			return self::factory(get_post($object));
 		} elseif ( isset($wp_query->post) ) {
 			return self::factory($wp_query->post);
 		}
 
-		new WP_Error('not_episode', 'Not An Episode');
-
+		return new WP_Error('not_series', 'Not A Series');
 	}
+
+	public static function get_by_series($id) {
+		return get_the_category_by_ID($id);
+	}
+
+	private static function _get_by_episode($post_id) {
+		$taxonomy = get_the_category($post_id);
+		if ( is_array($taxonomy) && $taxonomy[0] && !empty($taxonomy[0]) ) {
+			return new Nexus_Series($taxonomy[0]);
+		}
+		return new Nexus_Series(array());
+	}
+
+
+
+	// public function 
 
 	public static function get_series_ids() {
 		$ids = array();
@@ -41,74 +57,76 @@ class Nexus_Series {
 
 		return $ids;
 	}
+
+	// object class
 	
-	private static $series_core;
-
-
-	private $post_id;
-
-	// the $series_id is the primary category ID
 	private $series_id;
 
-	// the $object is the array of categories, but generally
-	// we're only interested in the primary category ID
 	private $object;
+	private $settings;
 
-	private $primary;
+	private $initialized = false; // indicates if this object has data
 
-	private function __construct($post_id) {
-		$this->post_id = $post_id;
-		$object = get_the_category($this->post_id);
-		if ( !is_array($object) ) $object = array();
+	private function __construct($object) {
 		$this->object = $object;
-
-		if ( $object && isset($this->object[0]) && !empty($this->object[0]) ) {
-			$this->primary = $this->object[0];
-			$this->series_id = $this->get_primary()->term_id;
+		
+		if ( isset($object->term_id) ) {
+			$this->series_id = $this->get_object()->term_id;
+			$this->initialized = true;
+			$this->settings = Nexus_Settings::get_instance()->get_series_settings($object->term_id);
 		}
-
 	}
 
-	public function get_primary() {
-		return $this->primary;
+	public function get_object() {
+		return $this->object;
+	}
+
+	public function is_initialized() {
+		return $this->initialized;
+	}
+
+	public function get_id() {
+		return $this->series_id;
+	}
+
+	public function get_settings() {
+		return $this->settings;
 	}
 
 	public function get_name() {
-		if ( !$this->primary ) return '';
-		return $this->primary->name;
+		if ( false == $this->is_initialized() ) {return '';}
+		return $this->get_object()->name;
 	}
 
 	public function get_slug() {
-		if ( !$this->primary ) return '';
-		return $this->primary->slug;
+		if ( false == $this->is_initialized() ) {return '';}
+		return $this->get_object()->slug;
 	}
 
 	public function get_description() {
-		if ( !$this->primary ) return '';
-		return $this->primary->description;
+		if ( false == $this->is_initialized() ) {return '';}
+		return $this->get_object()->description;
 	}
 
 	public function is_retired() {
-		$term_id = $this->series_id;
-		$option = get_option("nexus_core_series_$term_id");
-		if (!$option || !isset($option['retired'])) return false;
+		$retired = $this->get_settings()->get('series-retired');
 		return $option['retired'] == '1';
 	}
 
 	public function get_permalink() {
-		if ( !$this->primary ) return '';
-		return get_category_link($this->series_id);
+		if ( false == $this->is_initialized() ) {return '';}
+		return get_category_link($this->get_id());
 	}
 
 	public function get_feed_permalink() {
-		if ( !$this->primary ) return '';
-		return get_category_feed_link($this->series_id);
+		if ( false == $this->is_initialized() ) {return '';}
+		return get_category_feed_link($this->get_id());
 	}
 
 	public function get_itunes_subscription_url() {
-		// itunes_url
-		$powerpress_feed = get_option("powerpress_cat_feed_{$this->series_id}");
-		// var_dump($powerpress_general_settings);
+		
+		$powerpress_feed = get_option("powerpress_cat_feed_{$this->get_id()}");
+		
 		$url = $powerpress_feed['itunes_url'];
 		
 		$url = apply_filters('get_itunes_subscription_url', $url, $this);

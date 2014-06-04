@@ -11,7 +11,7 @@ class Nexus_Person {
 
 		if ( $object instanceof WP_Post ) {
 
-			if ( 'person' != $object->post_type ) new WP_Error('not_person', 'Not An Person');
+			if ( 'person' != $object->post_type ) new WP_Error('not_person', 'Not A Person');
 			return new self($object->ID);
 
 		} elseif ( is_numeric($object) ) {

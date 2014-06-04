@@ -3,7 +3,7 @@
 Plugin Name: Nexus Core
 Plugin URI: http://thenexus.tv/?nexus-core
 Description: The core of the Nexus.
-Version: 1.0.14
+Version: 1.1.0
 Author:
 Author URI: http://ryanrampersad.com
 License: MIT
@@ -20,6 +20,7 @@ define('NEXUS_CORE_LIBRARY', NEXUS_CORE_PATH . 'library/');
 define('NEXUS_CORE_VIEWS', NEXUS_CORE_PATH . 'views/');
 define('NEXUS_CORE_METABOXES', NEXUS_CORE_LIBRARY . 'metaboxes/');
 define('NEXUS_CORE_PAGES', NEXUS_CORE_LIBRARY . 'pages/');
+define('NEXUS_CORE_SETTINGS', NEXUS_CORE_LIBRARY . 'settings/');
 define('NEXUS_CORE_MODELS', NEXUS_CORE_LIBRARY . 'models/');
 define('NEXUS_CORE_WIDGETS', NEXUS_CORE_LIBRARY . 'widgets/');
 define('NEXUS_CORE_VENDOR', NEXUS_CORE_PATH . 'vendor/');
@@ -34,7 +35,12 @@ require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
 
 // core
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-core.php' );
+
+// settings
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-setting.php' );
+require_once( NEXUS_CORE_SETTINGS . 'class-nexus-general-settings.php' );
+require_once( NEXUS_CORE_SETTINGS . 'class-nexus-series-settings.php' );
 
 // pages
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-pages.php' );
