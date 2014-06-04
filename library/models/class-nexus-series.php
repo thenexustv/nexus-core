@@ -82,6 +82,11 @@ class Nexus_Series {
 		return $this->object;
 	}
 
+	public function get_count() {
+		if ( false == $this->is_initialized() ) {return 0;}
+		return $this->get_object()->count;
+	}
+
 	public function is_initialized() {
 		return $this->initialized;
 	}

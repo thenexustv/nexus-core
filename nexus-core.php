@@ -21,8 +21,9 @@ define('NEXUS_CORE_VIEWS', NEXUS_CORE_PATH . 'views/');
 define('NEXUS_CORE_METABOXES', NEXUS_CORE_LIBRARY . 'metaboxes/');
 define('NEXUS_CORE_PAGES', NEXUS_CORE_LIBRARY . 'pages/');
 define('NEXUS_CORE_SETTINGS', NEXUS_CORE_LIBRARY . 'settings/');
+define('NEXUS_CORE_EXTENSIONS', NEXUS_CORE_LIBRARY . 'extensions/');
 define('NEXUS_CORE_MODELS', NEXUS_CORE_LIBRARY . 'models/');
-define('NEXUS_CORE_WIDGETS', NEXUS_CORE_LIBRARY . 'widgets/');
+define('NEXUS_CORE_DASHBOARD', NEXUS_CORE_LIBRARY . 'dashboard/');
 define('NEXUS_CORE_VENDOR', NEXUS_CORE_PATH . 'vendor/');
 
 define('NEXUS_CORE_JS', NEXUS_CORE_PATH . 'js/');
@@ -35,6 +36,10 @@ require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
 
 // core
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-core.php' );
+
+// extensions
+require_once( NEXUS_CORE_EXTENSIONS . 'class-nexus-playboard.php' );
+require_once( NEXUS_CORE_EXTENSIONS . 'class-nexus-most-recent.php' );
 
 // settings
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings.php' );
@@ -64,9 +69,10 @@ require_once( NEXUS_CORE_MODELS . 'class-nexus-series.php' );
 require_once( NEXUS_CORE_MODELS . 'class-nexus-episode.php' );
 require_once( NEXUS_CORE_MODELS . 'class-nexus-person.php' );
 
-// widgets
-require_once( NEXUS_CORE_WIDGETS . 'class-nexus-playboard.php' );
-require_once( NEXUS_CORE_WIDGETS . 'class-nexus-most-recent.php' );
+// dashboard
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-dashboard.php' );
+require_once( NEXUS_CORE_DASHBOARD . 'class-nexus-playboard-dashboard.php' );
+require_once( NEXUS_CORE_DASHBOARD . 'class-nexus-most-recent-dashboard.php' );
 
 // vendor
 
@@ -82,7 +88,7 @@ Nexus_Core::get_instance();
 Nexus_Episode_People_Metabox::get_instance();
 Nexus_Episode_Metabox::get_instance();
 Nexus_People_Metabox::get_instance();
-Nexus_Playboard::get_instance();
+Nexus_Dashboard::get_instance();
 Nexus_Most_Recent::get_instance();
 Nexus_Feed::get_instance();
 Nexus_Pages::get_instance();
