@@ -6,7 +6,7 @@
 	<?php screen_icon(); ?>
 	<h2><?php echo esc_html( get_admin_page_title() ); ?></h2>
 
-	<p>Configure everything through the code, thanks.</p>
+	<p>Hi. You should check out the General and Series settings.</p>
 
 
 </div>

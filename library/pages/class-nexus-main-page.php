@@ -26,7 +26,7 @@ class Nexus_Main_Page extends Nexus_Page {
 	}
 
 	public function render() {
-		include(NEXUS_CORE_VIEWS . 'admin.php');
+		include(NEXUS_CORE_VIEWS . 'page-admin-default.php.php');
 	}
 
 }

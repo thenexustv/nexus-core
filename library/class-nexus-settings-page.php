@@ -7,17 +7,6 @@ abstract class Nexus_Settings_Page extends Nexus_Page {
 
 	private $settings;
 
-  //   public static function register($page = null) {
-
-		// if ( null === $page ) {
-	 //        $page = new static( Nexus_Settings::get_instance()->get_general_settings() );
-		// }
- 
-  //       $page = parent::register($page);
-
-  //       return $page;
-  //   }
-
 	public function __construct($settings) {
 		parent::__construct();
 

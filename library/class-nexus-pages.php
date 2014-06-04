@@ -12,17 +12,17 @@ class Nexus_Pages {
 
 	}
 
-	public function register() {
+	private function register() {
 
-		$pages['main'] = new Nexus_Main_Page();
-		$pages['general'] = new Nexus_General_Settings_Page();
-		$pages['series_list'] = new Nexus_Series_List_Page();
+		$this->pages['main'] = new Nexus_Main_Page();
+		$this->pages['general'] = new Nexus_General_Settings_Page();
+		$this->pages['series_list'] = new Nexus_Series_List_Page();
 
-		$pages['series'] = array();
+		$this->pages['series'] = array();
 		$series_ids = Nexus_Series::get_series_ids();
 
 		foreach ($series_ids as $series_id) {
-			$pages['series'][$series_id] = new Nexus_Series_Settings_Page($series_id);
+			$this->pages['series'][$series_id] = new Nexus_Series_Settings_Page($series_id);
 		}
 
 	}

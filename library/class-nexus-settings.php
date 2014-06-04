@@ -10,15 +10,19 @@ class Nexus_Settings {
 
 	public function __construct() {
 
+		$this->register();
+
+	}
+
+	private function register() {
+
 		$this->general_settings = new Nexus_General_Settings();
 
-		
 		$series_ids = Nexus_Series::get_series_ids();
 
 		foreach ($series_ids as $id) {
 			$this->series[$id] = new Nexus_Series_Settings($id);
 		}
-
 
 	}
 

@@ -59,7 +59,7 @@ class Nexus_Episode_Metabox extends Nexus_Metabox {
 
 		$nsfw_episode = get_post_meta($object->ID, 'nexus-nsfw-episode', true);
 
-		include(NEXUS_CORE_VIEWS . '/episode-metabox.php');
+		include(NEXUS_CORE_VIEWS . '/metabox-episode-people.php');
 	}
 
 	public function save($post_id, $post) {

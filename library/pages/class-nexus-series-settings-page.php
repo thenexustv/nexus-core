@@ -16,7 +16,7 @@ class Nexus_Series_Settings_Page extends Nexus_Settings_Page {
 		parent::__construct($settings);
 
 		$this->series = Nexus_Series::get_by_series($series_id);
-
+		
 		add_action('admin_enqueue_scripts', function(){
 			wp_enqueue_media();
 			wp_enqueue_script('jquery-ui-autocomplete');

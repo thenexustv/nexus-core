@@ -4,10 +4,7 @@ class Nexus_Playboard {
 
 	use Nexus_Singleton;
 
-	private $slug;
-
 	public function __construct() {
-		$this->slug = Nexus_Core::get_instance()->get_prefix('playboard');
 		add_action('wp_dashboard_setup', array($this, 'setup'));
 		add_action('save_post', array($this, 'update_post'), 1, 2);
 	}
@@ -18,22 +15,21 @@ class Nexus_Playboard {
 
 	public function display() {
 		$playboard = $this->get_playboard_data();
-		include(NEXUS_CORE_VIEWS . '/playboard-dashboard.php');
+		include(NEXUS_CORE_VIEWS . '/dashboard-playboard.php');
 	}
 
 	public function update_post($post_id, $post) {
 		if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return $post_id;
 		if ( $post->post_type == 'episode' ) {
-			delete_transient($this->slug . '-data');
+			delete_transient('nexus-playboard-data');
 		}
 	}
 
 	public function get_playboard_data() {
-		// $playboard = get_transient($this->slug . '-data');
-		$playboard = false;
+		$playboard = get_transient('nexus-playboard-data');
 		if ( false === $playboard ) {
 			$playboard = $this->get_data();
-			set_transient($this->slug . '-data', $playboard, 60 * 60 * 24);
+			set_transient('nexus-playboard-data', $playboard, 60 * 60 * 24);
 		}
 
 		return $playboard;

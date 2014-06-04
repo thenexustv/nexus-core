@@ -26,7 +26,8 @@ class Nexus_Series {
 	}
 
 	public static function get_by_series($id) {
-		return get_the_category_by_ID($id);
+		$object = get_term($id, 'category');
+		return new Nexus_Series($object);
 	}
 
 	private static function _get_by_episode($post_id) {
