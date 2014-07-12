@@ -42,3 +42,5 @@ resources/css/build/
 resources/js/build/
 deploy
 node_modules
+vendor/composer/
+vendor/autoload.php
