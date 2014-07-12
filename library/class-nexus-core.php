@@ -577,15 +577,28 @@ class Nexus_Core {
 		$wp_admin_bar->remove_menu('menus', 'site-name');
 	}
 
-	public function modify_admin_version_footer($f) {
-		$theme = wp_get_theme(); // get the current theme
+	public function get_page_statistics() {
+		
+		$theme = wp_get_theme();
 		$plugin = get_plugin_data(NEXUS_CORE);
+		$timer = timer_stop(0, 2);
+		$queries = get_num_queries();
+		$memory = Nexus_Utility::human_filesize(memory_get_usage(true));
 
-		$nexus_core_version = $plugin['Version'];
-		$coprime_version = $theme->Version;
+		$template = '
+		<div class="admin-statistics">
+		<a href="https://github.com/thenexustv/nexus-core">Nexus Core %1$s</a> | <a href="https://github.com/thenexustv/coprime">Coprime %2$s</a> | %3$s seconds | %4$s queries | %5$s
+		</div>
+		';
+		$output = sprintf($template, $plugin['Version'], $theme->Version, $timer, $queries, $memory);
 
-		$html = "<a href=\"https://github.com/thenexustv/nexus-core\">Nexus Core</a> {$nexus_core_version} | <a href=\"https://github.com/thenexustv/coprime\">Coprime</a> {$coprime_version}";
-		return $html;
+		return $output;
+
+	}
+
+	public function modify_admin_version_footer($f) {
+		
+		return $this->get_page_statistics();
 	}
 
 	/**

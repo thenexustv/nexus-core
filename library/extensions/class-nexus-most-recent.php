@@ -4,6 +4,10 @@ class Nexus_Most_Recent {
 
 	use Nexus_Singleton;
 
+	public function __construct() {
+		add_action('save_post', array($this, 'update_post'), 1, 2);
+	}
+
 	public function update_post($post_id, $post) {
 		if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return $post_id;
 		if ( $post->post_type == 'episode' ) {
@@ -12,17 +16,12 @@ class Nexus_Most_Recent {
 	}
 
 	public function get_data() {
-
-		// $recent = get_transient($this->slug . '-data');
-		$recent = false;
-		
+		$recent = get_transient('nexus-most-recent-data');
 		if (false === $recent) {
 			$recent = $this->get_recent_data();
 			set_transient('nexus-most-recent-data', $recent, 60 * 60 * 24);
 		}
-
 		return $recent;
-
 	}
 
 	private function get_recent_data() {

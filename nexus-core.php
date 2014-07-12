@@ -33,6 +33,7 @@ define('NEXUS_CORE_CSS', NEXUS_CORE_PATH . 'css/');
 require_once( NEXUS_CORE_LIBRARY . 'trait-nexus-singleton.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-utility.php' );
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
+require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metaboxes.php' );
 
 // core
 require_once( NEXUS_CORE_LIBRARY . 'class-nexus-core.php' );
@@ -85,6 +86,7 @@ register_deactivation_hook( __FILE__, array( 'Nexus_Core', 'deactivate' ) );
 
 // starter
 Nexus_Core::get_instance();
+Nexus_Metaboxes::get_instance();
 Nexus_Episode_People_Metabox::get_instance();
 Nexus_Episode_Metabox::get_instance();
 Nexus_People_Metabox::get_instance();

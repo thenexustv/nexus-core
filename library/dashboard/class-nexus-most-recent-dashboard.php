@@ -8,7 +8,6 @@ class Nexus_Most_Recent_Dashboard {
 
 	public function __construct() {
 		add_action('wp_dashboard_setup', array($this, 'setup'));
-		add_action('save_post', array($this, 'update_post'), 1, 2);
 	}
 
 	public function setup() {
