@@ -109,7 +109,7 @@ class Core {
 		Modify Jetpack Open Graph support.
 	*/
 	public function modify_open_graph($tags, $sizes) {
-		
+
 		if ( is_home() || is_front_page() ) {
 			$tags['og:type'] = 'website';
 			$tags['og:title'] = $this->format_site_wide_titles('');
@@ -166,7 +166,7 @@ class Core {
 			$query->set('posts_per_page', 12);
 			$query->set('orderby', 'title');
 			$query->set('order', 'ASC');
-			$query->set('meta_key', 'nexus-people-host');			
+			$query->set('meta_key', 'nexus-people-host');
 
 			if ( isset($query->query_vars['target']) && $query->query_vars['target'] == 'hosts' ) {
 				$query->set('meta_key', 'nexus-people-host');
@@ -176,7 +176,7 @@ class Core {
 				$query->set('meta_key', 'nexus-people-host');
 				$query->set('meta_value', '0');
 			}
-		
+
 			add_filter('posts_orderby', array($this, 'people_pre_get_posts_orderby'));
 		}
 
@@ -320,7 +320,7 @@ class Core {
 	 */
 	public function register_custom_taxonomies() {
 		$this->register_episodes();
-		
+
 		// we will always have post thumbnails so why not put this here?
 		add_theme_support( 'post-thumbnails', array('episode'));
 		// TODO: does this work?
@@ -342,10 +342,10 @@ class Core {
 
 	/**
 	* Adds the paramters to the WP_Tax query to exclude the 'hidden' episode attribute taxonomy.
-	* 
+	*
 	* Add 'hidden' Attribute meta to hide an episode from regular visitors.
-	* 
-	* @param type $query 
+	*
+	* @param type $query
 	* @return type
 	*/
 	function exclude_episode_attribute_hidden($query) {
@@ -365,7 +365,7 @@ class Core {
 	}
 
 	private function register_series() {
-		$labels = array( 
+		$labels = array(
 	        'name' => _x( 'Series', 'series' ),
 	        'singular_name' => _x( 'Series', 'series' ),
 	        'search_items' => _x( 'Search Series', 'series' ),
@@ -383,7 +383,7 @@ class Core {
 	        'menu_name' => _x( 'Series', 'series' ),
     	);
 
-	    $args = array( 
+	    $args = array(
 	        'labels' => $labels,
 	        'public' => true,
 	        'show_in_nav_menus' => true,
@@ -400,7 +400,7 @@ class Core {
 	}
 
 	private function register_episodes() {
-	    $labels = array( 
+	    $labels = array(
 	        'name' => _x( 'Episodes', 'episode' ),
 	        'singular_name' => _x( 'Episode', 'episode' ),
 	        'add_new' => _x( 'Add New', 'episode' ),
@@ -415,17 +415,17 @@ class Core {
 	        'menu_name' => _x( 'Episodes', 'episode' ),
 	    );
 
-	    $args = array( 
+	    $args = array(
 	        'labels' => $labels,
 	        'hierarchical' => false,
-	        
+
 	        'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions' ),
 	        'taxonomies' => array( 'category', 'episode_attributes' ),
 	        'public' => true,
 	        'show_ui' => true,
 	        'show_in_menu' => true,
 	        'menu_position' => 5,
-	        
+
 	        'show_in_nav_menus' => true,
 	        'publicly_queryable' => true,
 	        'exclude_from_search' => false,
@@ -440,7 +440,7 @@ class Core {
 	}
 
 	private function register_episode_attributes() {
-	    $labels = array( 
+	    $labels = array(
 	        'name' => _x( 'Episode Attributes', 'episode_attributes' ),
 	        'singular_name' => _x( 'Episode Attribute', 'episode_attributes' ),
 	        'search_items' => _x( 'Search Episode Attributes', 'episode_attributes' ),
@@ -458,7 +458,7 @@ class Core {
 	        'menu_name' => _x( 'Attributes', 'episode_attributes' ),
 	    );
 
-	    $args = array( 
+	    $args = array(
 	        'labels' => $labels,
 	        'public' => true,
 	        'show_in_nav_menus' => true,
@@ -474,7 +474,7 @@ class Core {
 	}
 
 	private function register_people() {
-		$labels = array( 
+		$labels = array(
 	        'name' => _x( 'People', 'person' ),
 	        'singular_name' => _x( 'Person', 'person' ),
 	        'add_new' => _x( 'Add New', 'person' ),
@@ -489,17 +489,17 @@ class Core {
 	        'menu_name' => _x( 'People', 'person' ),
 	    );
 
-	    $args = array( 
+	    $args = array(
 	        'labels' => $labels,
 	        'hierarchical' => false,
-	        
+
 	        'supports' => array( 'title', 'editor', 'excerpt' ),
-	        
+
 	        'public' => true,
 	        'show_ui' => true,
 	        'show_in_menu' => true,
 	        'menu_position' => 8,
-	        
+
 	        'show_in_nav_menus' => true,
 	        'publicly_queryable' => true,
 	        'exclude_from_search' => false,
@@ -536,7 +536,7 @@ class Core {
 		$wp_admin_bar->remove_menu('new-media', 'new-content');
 		$wp_admin_bar->remove_menu('new-page', 'new-content');
 		$wp_admin_bar->remove_menu('new-user', 'new-content');
-		
+
 		// remove the WordPress logo; it is not needed
 		//$wp_admin_bar->remove_menu('wp-logo');
 
@@ -552,7 +552,7 @@ class Core {
 	}
 
 	public function get_page_statistics() {
-		
+
 		$theme = wp_get_theme();
 		$plugin = get_plugin_data(NEXUS_CORE);
 		$timer = timer_stop(0, 2);
@@ -571,7 +571,7 @@ class Core {
 	}
 
 	public function modify_admin_version_footer($f) {
-		
+
 		return $this->get_page_statistics();
 	}
 
@@ -630,7 +630,7 @@ class Core {
 	 */
 	public function enqueue_admin_scripts() {
 		wp_enqueue_script( $this->plugin_slug . '-admin-script', NEXUS_CORE_JS . 'admin.js', array( 'jquery' ), $this->version );
-	}	
+	}
 
 	/**
 	 * Register and enqueue public-facing style sheet.
@@ -638,7 +638,7 @@ class Core {
 	 * @since    0.0.1
 	 */
 	public function enqueue_styles() {
-		
+
 	}
 
 	/**
@@ -647,7 +647,7 @@ class Core {
 	 * @since    0.0.1
 	 */
 	public function enqueue_scripts() {
-		
+
 	}
 
 
@@ -706,7 +706,7 @@ class Core {
 		global $post;
 		$screen = get_current_screen();
 
-		if ('edit-episode' != $screen->id || !$post || 'episode' != $post->post_type) return $title; 
+		if ('edit-episode' != $screen->id || !$post || 'episode' != $post->post_type) return $title;
 
 		return Episode::format_episode_title($post);
 	}
