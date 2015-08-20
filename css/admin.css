@@ -122,3 +122,15 @@
 	/* Don't let users create categories this way (e.g. series) */
 	display: none;
 }
+
+/* Tab Styles */
+
+.media-tabs .tabs li {
+	display: inline;
+	margin-right: 1em;
+}
+
+.media-tabs .section {
+	padding: 1em;
+	border-top: 1px solid #ccc;
+}

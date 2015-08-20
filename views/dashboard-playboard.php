@@ -1,4 +1,4 @@
-<?php if (!class_exists('Nexus_Core')) exit(); ?>
+<?php 	if (!class_exists('\Nexus\Core')) exit(); ?>
 
 <div id="playboard">
 	<div class="inner">

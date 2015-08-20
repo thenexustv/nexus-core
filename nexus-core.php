@@ -9,89 +9,40 @@ Author URI: http://ryanrampersad.com
 License: MIT
 */
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+if (!defined('ABSPATH')) {
+	exit();
 }
+
+$loader = require('vendor/autoload.php');
 
 define('NEXUS_CORE', __FILE__);
 define('NEXUS_CORE_PATH', plugin_dir_path( __FILE__ ));
+define('NEXUS_CORE_URL', plugin_dir_url( __FILE__ ));
 define('NEXUS_CORE_LIBRARY', NEXUS_CORE_PATH . 'library/');
 define('NEXUS_CORE_VIEWS', NEXUS_CORE_PATH . 'views/');
+define('NEXUS_CORE_MEDIA_VIEWS', NEXUS_CORE_PATH . 'views/media/');
 define('NEXUS_CORE_METABOXES', NEXUS_CORE_LIBRARY . 'metaboxes/');
 define('NEXUS_CORE_PAGES', NEXUS_CORE_LIBRARY . 'pages/');
 define('NEXUS_CORE_SETTINGS', NEXUS_CORE_LIBRARY . 'settings/');
 define('NEXUS_CORE_EXTENSIONS', NEXUS_CORE_LIBRARY . 'extensions/');
-define('NEXUS_CORE_MODELS', NEXUS_CORE_LIBRARY . 'models/');
 define('NEXUS_CORE_DASHBOARD', NEXUS_CORE_LIBRARY . 'dashboard/');
 define('NEXUS_CORE_VENDOR', NEXUS_CORE_PATH . 'vendor/');
 
-define('NEXUS_CORE_JS', NEXUS_CORE_PATH . 'js/');
-define('NEXUS_CORE_CSS', NEXUS_CORE_PATH . 'css/');
+define('NEXUS_CORE_JS', NEXUS_CORE_URL . 'js/');
+define('NEXUS_CORE_CSS', NEXUS_CORE_URL . 'css/');
 
-// generic includes
-require_once( NEXUS_CORE_LIBRARY . 'trait-nexus-singleton.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-utility.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metabox.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-metaboxes.php' );
+// // starter
+\Nexus\Core::get_instance();
+\Nexus\Feeds::get_instance();
+\Nexus\Pages::get_instance();
+\Nexus\Settings::get_instance();
+\Nexus\Dashboard::get_instance();
+\Nexus\Media::get_instance();
 
-// core
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-core.php' );
+\Nexus\Metaboxes::get_instance();
+\Nexus\Metaboxes\EpisodeMetabox::get_instance();
+\Nexus\Metaboxes\PeopleMetabox::get_instance();
+\Nexus\Metaboxes\EpisodePeopleMetabox::get_instance();
 
-// extensions
-require_once( NEXUS_CORE_EXTENSIONS . 'class-nexus-playboard.php' );
-require_once( NEXUS_CORE_EXTENSIONS . 'class-nexus-most-recent.php' );
-
-// settings
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-setting.php' );
-require_once( NEXUS_CORE_SETTINGS . 'class-nexus-general-settings.php' );
-require_once( NEXUS_CORE_SETTINGS . 'class-nexus-series-settings.php' );
-
-// pages
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-pages.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-page.php' );
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-settings-page.php' );
-require_once( NEXUS_CORE_PAGES . 'class-nexus-main-page.php' );
-require_once( NEXUS_CORE_PAGES . 'class-nexus-general-settings-page.php' );
-require_once( NEXUS_CORE_PAGES . 'class-nexus-series-list-page.php' );
-require_once( NEXUS_CORE_PAGES . 'class-nexus-series-settings-page.php' );
-
-// feeds
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-feed.php' );
-
-// metaboxes
-require_once( NEXUS_CORE_METABOXES . 'class-nexus-episode-people-metabox.php' );
-require_once( NEXUS_CORE_METABOXES . 'class-nexus-people-metabox.php' );
-require_once( NEXUS_CORE_METABOXES . 'class-nexus-episode-metabox.php' );
-
-// models
-require_once( NEXUS_CORE_MODELS . 'class-nexus-series.php' );
-require_once( NEXUS_CORE_MODELS . 'class-nexus-episode.php' );
-require_once( NEXUS_CORE_MODELS . 'class-nexus-person.php' );
-
-// dashboard
-require_once( NEXUS_CORE_LIBRARY . 'class-nexus-dashboard.php' );
-require_once( NEXUS_CORE_DASHBOARD . 'class-nexus-playboard-dashboard.php' );
-require_once( NEXUS_CORE_DASHBOARD . 'class-nexus-most-recent-dashboard.php' );
-
-// vendor
-
-require_once( NEXUS_CORE_VENDOR . 'get-the-image/get-the-image.php' );
-require_once( NEXUS_CORE_VENDOR . 'loop-pagination/loop-pagination.php' );
-
-// activation and deactivation hooks
-register_activation_hook( __FILE__, array( 'Nexus_Core', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'Nexus_Core', 'deactivate' ) );
-
-// starter
-Nexus_Core::get_instance();
-Nexus_Metaboxes::get_instance();
-Nexus_Episode_People_Metabox::get_instance();
-Nexus_Episode_Metabox::get_instance();
-Nexus_People_Metabox::get_instance();
-Nexus_Dashboard::get_instance();
-Nexus_Most_Recent::get_instance();
-Nexus_Feed::get_instance();
-Nexus_Pages::get_instance();
-Nexus_Settings::get_instance();
+\Nexus\Extensions\Playboard::get_instance();
+\Nexus\Extensions\MostRecent::get_instance();

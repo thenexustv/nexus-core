@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists('Nexus_Core')) exit();
+if (!class_exists('\Nexus\Core')) exit();
 
 $this->print_nonce_field();
 

@@ -1,0 +1,20 @@
+{
+
+	"autoload": {
+		"psr-4": {
+
+			"Nexus\\": "nexus/",
+			"Nexus\\Settings\\": "nexus/settings/",
+			"Nexus\\Pages\\": "nexus/pages/",
+			"Nexus\\Extensions\\": "nexus/extensions/",
+			"Nexus\\Dashboard\\": "nexus/dashboard/",
+			"Nexus\\Metaboxes\\": "nexus/metaboxes/"
+
+		},
+		"files": [
+			"vendor/get-the-image/get-the-image.php",
+			"vendor/loop-pagination/loop-pagination.php"
+		]
+	}
+
+}
